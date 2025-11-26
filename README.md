@@ -124,6 +124,7 @@ await setPopupSize(
    - Go to Environment settings > Custom apps
    - Add a new custom app with your deployed URL
    - Configure the URL pattern where the app should appear
+   - Optionally, change the app to the dialog mode
 
 ## Learn More
 
