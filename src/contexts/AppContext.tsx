@@ -68,8 +68,15 @@ export const useAppContext = (): CustomAppContext => {
  * @throws Error if used outside of AppContextProvider
  * @returns The app configuration object
  */
-export const useAppConfig = () =>
-  JSON.parse((useAppContext().appConfig as string | null) ?? "null") as unknown;
+export const useAppConfig = () => {
+  const context = useAppContext();
+
+  try {
+    return JSON.parse((context.appConfig as string | null) ?? "null") as unknown;
+  } catch {
+    return null;
+  }
+};
 
 interface UseCustomAppContextResult {
   context: CustomAppContext | null;
