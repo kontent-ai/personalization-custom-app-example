@@ -116,6 +116,8 @@ await setPopupSize(
 
 ## Deploying Your Custom App
 
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/kontent-ai/custom-app-starter-react.git)
+
 1. Build the app: `pnpm build`
 2. Deploy the `dist` folder to your hosting provider (Netlify, Vercel, etc.)
 3. Configure the custom app in Kontent.ai:
