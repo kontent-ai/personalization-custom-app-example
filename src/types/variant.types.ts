@@ -15,15 +15,6 @@ export interface CurrentItemData {
   readonly hasSnippet: boolean;
 }
 
-export type LoadingState = "idle" | "loading" | "success" | "error";
-
-export interface UseCurrentItemResult {
-  readonly data: CurrentItemData | null;
-  readonly loadingState: LoadingState;
-  readonly error: string | null;
-  readonly refetch: () => Promise<void>;
-}
-
 export interface VariantInfo {
   readonly id: string;
   readonly name: string;

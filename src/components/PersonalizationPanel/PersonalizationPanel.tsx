@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+import { ErrorBoundary, type FallbackProps } from "react-error-boundary";
 import { useAudienceTaxonomy } from "../../hooks/useAudienceTaxonomy";
 import { useCurrentItem } from "../../hooks/useCurrentItem";
 import { useExistingVariants } from "../../hooks/useExistingVariants";
@@ -19,11 +21,7 @@ const LoadingState = () => (
   </div>
 );
 
-interface ErrorStateProps {
-  readonly message: string;
-}
-
-const ErrorState = ({ message }: ErrorStateProps) => (
+const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => (
   <div className={styles.errorContainer}>
     <svg
       className={styles.errorIcon}
@@ -40,7 +38,16 @@ const ErrorState = ({ message }: ErrorStateProps) => (
     </svg>
     <div className={styles.errorContent}>
       <p className={styles.errorTitle}>Error loading item</p>
-      <p className={styles.errorMessage}>{message}</p>
+      <p className={styles.errorMessage}>
+        {error instanceof Error ? error.message : "An unknown error occurred"}
+      </p>
+      <button
+        type="button"
+        className={styles.retryButton}
+        onClick={resetErrorBoundary}
+      >
+        Try again
+      </button>
     </div>
   </div>
 );
@@ -55,68 +62,33 @@ const NoSnippetState = () => (
   </div>
 );
 
-export const PersonalizationPanel = ({
+interface PersonalizationPanelContentProps {
+  readonly environmentId: string;
+  readonly itemId: string;
+  readonly languageId: string;
+}
+
+const PersonalizationPanelContent = ({
   environmentId,
   itemId,
   languageId,
-}: PersonalizationPanelProps) => {
-  const { data, loadingState, error } = useCurrentItem(
-    environmentId,
-    itemId,
-    languageId
-  );
-
+}: PersonalizationPanelContentProps) => {
+  const { data } = useCurrentItem(environmentId, itemId, languageId);
   const { termMap: audienceTermMap } = useAudienceTaxonomy(environmentId);
-
-  const { variants, loadingState: variantsLoadingState } = useExistingVariants(
+  const { variants } = useExistingVariants(
     environmentId,
     languageId,
     itemId,
     data
   );
-
-  const { language } = useLanguage(
-    environmentId,
-    languageId
-  );
-
-  if (loadingState === "loading" || loadingState === "idle") {
-    return (
-      <div className={styles.container}>
-        <LoadingState />
-      </div>
-    );
-  }
-
-  if (loadingState === "error" || error) {
-    return (
-      <div className={styles.container}>
-        <ErrorState message={error ?? "Unknown error"} />
-      </div>
-    );
-  }
-
-  if (!data) {
-    return (
-      <div className={styles.container}>
-        <ErrorState message="No data available" />
-      </div>
-    );
-  }
+  const { language } = useLanguage(environmentId, languageId);
 
   if (!data.hasSnippet) {
-    return (
-      <div className={styles.container}>
-        <NoSnippetState />
-      </div>
-    );
+    return <NoSnippetState />;
   }
 
-  const isVariantsLoading =
-    variantsLoadingState === "loading" || variantsLoadingState === "idle";
-
   return (
-    <div className={styles.container}>
+    <>
       <div className={styles.header}>
         <h1 className={styles.title}>Personalization</h1>
       </div>
@@ -135,8 +107,25 @@ export const PersonalizationPanel = ({
         audienceTermMap={audienceTermMap}
         environmentId={environmentId}
         language={language}
-        isLoading={isVariantsLoading}
       />
-    </div>
+    </>
   );
 };
+
+export const PersonalizationPanel = ({
+  environmentId,
+  itemId,
+  languageId,
+}: PersonalizationPanelProps) => (
+  <div className={styles.container}>
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <Suspense fallback={<LoadingState />}>
+        <PersonalizationPanelContent
+          environmentId={environmentId}
+          itemId={itemId}
+          languageId={languageId}
+        />
+      </Suspense>
+    </ErrorBoundary>
+  </div>
+);

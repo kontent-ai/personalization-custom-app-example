@@ -7,8 +7,7 @@ interface VariantListProps {
   readonly variants: ReadonlyArray<VariantInfo>;
   readonly audienceTermMap: ReadonlyMap<string, string>;
   readonly environmentId: string;
-  readonly language: LanguageModels.LanguageModel | null;
-  readonly isLoading: boolean;
+  readonly language: LanguageModels.LanguageModel;
 }
 
 const EmptyState = () => (
@@ -20,56 +19,35 @@ const EmptyState = () => (
   </div>
 );
 
-const LoadingState = () => (
-  <div className={styles.loadingState}>
-    <div className={styles.spinner} />
-    <span className={styles.loadingText}>Loading variants...</span>
-  </div>
-);
-
 export const VariantList = ({
   variants,
   audienceTermMap,
   environmentId,
   language,
-  isLoading,
-}: VariantListProps) => {
-  if (isLoading) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <h2 className={styles.title}>Variants</h2>
-        </div>
-        <LoadingState />
-      </div>
-    );
-  }
-
-  return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <h2 className={styles.title}>Other Variants</h2>
-        <span className={styles.count}>{variants.length}</span>
-      </div>
-      {variants.length === 0 ? (
-        <EmptyState />
-      ) : (
-        <div className={styles.list}>
-          {variants.map((variant) => (
-            <VariantCard
-              key={variant.id}
-              variant={variant}
-              audienceName={
-                variant.audienceTermId
-                  ? audienceTermMap.get(variant.audienceTermId) ?? null
-                  : null
-              }
-              environmentId={environmentId}
-              language={language}
-            />
-          ))}
-        </div>
-      )}
+}: VariantListProps) => (
+  <div className={styles.container}>
+    <div className={styles.header}>
+      <h2 className={styles.title}>Other Variants</h2>
+      <span className={styles.count}>{variants.length}</span>
     </div>
-  );
-};
+    {variants.length === 0 ? (
+      <EmptyState />
+    ) : (
+      <div className={styles.list}>
+        {variants.map((variant) => (
+          <VariantCard
+            key={variant.id}
+            variant={variant}
+            audienceName={
+              variant.audienceTermId
+                ? audienceTermMap.get(variant.audienceTermId) ?? null
+                : null
+            }
+            environmentId={environmentId}
+            language={language}
+          />
+        ))}
+      </div>
+    )}
+  </div>
+);

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import type { ContentTypeElements, ElementModels, LanguageVariantModels, TaxonomyModels } from "@kontent-ai/management-sdk";
 import {
@@ -7,57 +7,38 @@ import {
   VARIANT_TYPE_TERMS,
   findElementIdByCodenameSuffix,
 } from "../constants/codenames";
+import { queryKeys } from "../constants/queryKeys";
 import { fetchContentType, fetchItem, fetchTaxonomy, fetchVariant } from "../services/api";
-import type {
-  CurrentItemData,
-  LoadingState,
-  UseCurrentItemResult,
-} from "../types/variant.types";
+import type { CurrentItemData } from "../types/variant.types";
 
 const buildElementCodenamesMap = (
   contentTypeElements: ReadonlyArray<ContentTypeElements.Element>,
   snippetElements: ReadonlyArray<ReadonlyArray<ContentTypeElements.Element>>
 ): ReadonlyMap<string, string> => {
-  const entries: Array<[string, string]> = [];
+  const typeEntries = contentTypeElements
+    .filter((el) => el.id && el.codename)
+    .map((el) => [el.id, el.codename] as [string, string]);
 
-  contentTypeElements.forEach((element) => {
-    if (element.id && element.codename) {
-      entries.push([element.id, element.codename]);
-    }
-  });
+  const snippetEntries = snippetElements
+    .flat()
+    .filter((el) => el.id && el.codename)
+    .map((el) => [el.id, el.codename] as [string, string]);
 
-  snippetElements.flat().forEach((element) => {
-    if (element.id && element.codename) {
-      entries.push([element.id, element.codename]);
-    }
-  });
-
-  return new Map(entries);
+  return new Map([...typeEntries, ...snippetEntries]);
 };
 
-const findVariantTermId = (taxonomy: TaxonomyModels.Taxonomy): string | undefined => {
-  // Terms are also of type Taxonomy (nested structure)
-  const findInTerms = (terms: ReadonlyArray<TaxonomyModels.Taxonomy>): string | undefined => {
-    for (const term of terms) {
-      if (term.codename === VARIANT_TYPE_TERMS.VARIANT) {
-        return term.id;
-      }
-      if (term.terms.length > 0) {
-        const found = findInTerms(term.terms);
-        if (found) return found;
-      }
-    }
-    return undefined;
-  };
+const findVariantTermId = (
+  terms: ReadonlyArray<TaxonomyModels.Taxonomy>
+): string | undefined =>
+  terms
+    .map((term) =>
+      term.codename === VARIANT_TYPE_TERMS.VARIANT
+        ? term.id
+        : findVariantTermId(term.terms)
+    )
+    .find((id) => id !== undefined);
 
-  return findInTerms(taxonomy.terms);
-};
-
-const referenceObjectSchema = z.object({
-  id: z.string(),
-});
-
-const referenceArraySchema = z.array(referenceObjectSchema);
+const referenceArraySchema = z.array(z.object({ id: z.string() }));
 
 const checkIfVariant = (
   variantElements: ReadonlyArray<ElementModels.ContentItemElement>,
@@ -93,101 +74,69 @@ const checkIfVariant = (
   return taxonomyValue.data.some((term) => term.id === variantTermId);
 };
 
-const checkHasSnippet = (
-  elementCodenames: ReadonlyMap<string, string>
-): boolean => {
-  const variantTypeId = findElementIdByCodenameSuffix(
-    elementCodenames,
-    ELEMENT_SUFFIXES.VARIANT_TYPE
-  );
-  const audienceId = findElementIdByCodenameSuffix(
-    elementCodenames,
-    ELEMENT_SUFFIXES.PERSONALIZATION_AUDIENCE
-  );
-  const contentVariantsId = findElementIdByCodenameSuffix(
-    elementCodenames,
-    ELEMENT_SUFFIXES.CONTENT_VARIANTS
-  );
+const checkHasSnippet = (elementCodenames: ReadonlyMap<string, string>): boolean => {
+  const variantTypeId = findElementIdByCodenameSuffix(elementCodenames, ELEMENT_SUFFIXES.VARIANT_TYPE);
+  const audienceId = findElementIdByCodenameSuffix(elementCodenames, ELEMENT_SUFFIXES.PERSONALIZATION_AUDIENCE);
+  const contentVariantsId = findElementIdByCodenameSuffix(elementCodenames, ELEMENT_SUFFIXES.CONTENT_VARIANTS);
 
   return Boolean(variantTypeId && audienceId && contentVariantsId);
+};
+
+const fetchCurrentItemData = async (
+  environmentId: string,
+  itemId: string,
+  languageId: string
+): Promise<CurrentItemData> => {
+  const [itemResult, variantResult] = await Promise.all([
+    fetchItem(environmentId, itemId),
+    fetchVariant(environmentId, itemId, languageId),
+  ]);
+
+  if (itemResult.error || !itemResult.data) {
+    throw new Error(itemResult.error ?? "Failed to fetch item");
+  }
+
+  if (variantResult.error || !variantResult.data) {
+    throw new Error(variantResult.error ?? "Failed to fetch variant");
+  }
+
+  const typeResult = await fetchContentType(environmentId, itemResult.data.type.id);
+
+  if (typeResult.error || !typeResult.data) {
+    throw new Error(typeResult.error ?? "Failed to fetch content type");
+  }
+
+  const elementCodenames = buildElementCodenamesMap(
+    typeResult.data.contentType.elements,
+    typeResult.data.snippets.map((s) => s.elements)
+  );
+
+  const hasSnippet = checkHasSnippet(elementCodenames);
+
+  const isVariant = hasSnippet && await determineIsVariant(variantResult.data, elementCodenames, environmentId);
+
+  return {
+    item: itemResult.data,
+    variant: variantResult.data,
+    contentType: typeResult.data.contentType,
+    snippets: typeResult.data.snippets,
+    elementCodenames,
+    isVariant,
+    hasSnippet,
+  };
 };
 
 export const useCurrentItem = (
   environmentId: string,
   itemId: string,
   languageId: string
-): UseCurrentItemResult => {
-  const [data, setData] = useState<CurrentItemData | null>(null);
-  const [loadingState, setLoadingState] = useState<LoadingState>("idle");
-  const [error, setError] = useState<string | null>(null);
+) => {
+  const { data } = useSuspenseQuery({
+    queryKey: queryKeys.currentItem(environmentId, itemId, languageId),
+    queryFn: async () => fetchCurrentItemData(environmentId, itemId, languageId),
+  });
 
-  const fetchData = useCallback(async () => {
-    if (!environmentId || !itemId || !languageId) {
-      return;
-    }
-
-    setLoadingState("loading");
-    setError(null);
-
-    const [itemResult, variantResult] = await Promise.all([
-      fetchItem(environmentId, itemId),
-      fetchVariant(environmentId, itemId, languageId),
-    ]);
-
-    if (itemResult.error || !itemResult.data) {
-      setError(itemResult.error ?? "Failed to fetch item");
-      setLoadingState("error");
-      return;
-    }
-
-    if (variantResult.error || !variantResult.data) {
-      setError(variantResult.error ?? "Failed to fetch variant");
-      setLoadingState("error");
-      return;
-    }
-
-    const typeResult = await fetchContentType(
-      environmentId,
-      itemResult.data.type.id
-    );
-
-    if (typeResult.error || !typeResult.data) {
-      setError(typeResult.error ?? "Failed to fetch content type");
-      setLoadingState("error");
-      return;
-    }
-
-    const elementCodenames = buildElementCodenamesMap(
-      typeResult.data.contentType.elements,
-      typeResult.data.snippets.map((s) => s.elements)
-    );
-
-    const hasSnippet = checkHasSnippet(elementCodenames);
-
-    const isVariant = hasSnippet && await determineIsVariant(variantResult.data, elementCodenames, environmentId);
-
-    setData({
-      item: itemResult.data,
-      variant: variantResult.data,
-      contentType: typeResult.data.contentType,
-      snippets: typeResult.data.snippets,
-      elementCodenames,
-      isVariant,
-      hasSnippet,
-    });
-    setLoadingState("success");
-  }, [environmentId, itemId, languageId]);
-
-  useEffect(() => {
-    void fetchData();
-  }, [fetchData]);
-
-  return {
-    data,
-    loadingState,
-    error,
-    refetch: fetchData,
-  };
+  return { data };
 };
 
 const determineIsVariant = async (
@@ -201,7 +150,7 @@ const determineIsVariant = async (
   );
 
   if (taxonomyResult.data) {
-    const variantTermId = findVariantTermId(taxonomyResult.data);
+    const variantTermId = findVariantTermId(taxonomyResult.data.terms);
     return checkIfVariant(variant.elements, elementCodenames, variantTermId);
   }
   return false;
