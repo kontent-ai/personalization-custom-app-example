@@ -109,3 +109,9 @@ export const updateContentVariants = async (
   params: UpdateContentVariantsParams
 ): Promise<ApiResponse<{ success: boolean }>> =>
   callFunction("update-content-variants", { ...params });
+
+export const deleteItem = async (
+  environmentId: string,
+  itemId: string
+): Promise<ApiResponse<{ success: boolean }>> =>
+  callFunction("delete-item", { environmentId, itemId });

@@ -1,12 +1,15 @@
-import { Suspense, useMemo } from "react";
+import { Suspense, useMemo, useState } from "react";
 import { ErrorBoundary, type FallbackProps } from "react-error-boundary";
 import { useAudienceTaxonomy } from "../../hooks/useAudienceTaxonomy";
 import { useCreateVariant } from "../../hooks/useCreateVariant";
 import { useCurrentItem } from "../../hooks/useCurrentItem";
+import { useDeleteVariant } from "../../hooks/useDeleteVariant";
 import { useExistingVariants } from "../../hooks/useExistingVariants";
 import { useLanguage } from "../../hooks/useLanguage";
 import { useVariantTermId } from "../../hooks/useVariantTermId";
+import type { VariantInfo } from "../../types/variant.types";
 import { AudienceSelector } from "../AudienceSelector/AudienceSelector";
+import { ConfirmDeleteModal } from "../ConfirmDeleteModal/ConfirmDeleteModal";
 import { StatusBadge } from "../StatusBadge/StatusBadge";
 import { StatusMessage } from "../StatusMessage/StatusMessage";
 import { VariantList } from "../VariantList/VariantList";
@@ -77,6 +80,10 @@ const PersonalizationPanelContent = ({
   itemId,
   languageId,
 }: PersonalizationPanelContentProps) => {
+  const [variantToDelete, setVariantToDelete] = useState<VariantInfo | null>(
+    null
+  );
+
   const { data } = useCurrentItem(environmentId, itemId, languageId);
   const { terms: audienceTerms, termMap: audienceTermMap } =
     useAudienceTaxonomy(environmentId);
@@ -91,16 +98,34 @@ const PersonalizationPanelContent = ({
 
   const isBaseContent = !data.isVariant;
 
-  const { createVariant, isCreating, error, isSuccess, reset } = useCreateVariant(
-    {
-      environmentId,
-      languageId,
-      currentItemData: data,
-      variantTermId,
-      baseItemId: itemId,
-      existingVariants: variants,
-    }
-  );
+  const {
+    createVariant,
+    isCreating,
+    error: createError,
+    isSuccess: createSuccess,
+    reset: resetCreate,
+  } = useCreateVariant({
+    environmentId,
+    languageId,
+    currentItemData: data,
+    variantTermId,
+    baseItemId: itemId,
+    existingVariants: variants,
+  });
+
+  const {
+    deleteVariant,
+    isDeleting,
+    error: deleteError,
+    isSuccess: deleteSuccess,
+    reset: resetDelete,
+  } = useDeleteVariant({
+    environmentId,
+    languageId,
+    currentItemData: data,
+    baseItemId: itemId,
+    existingVariants: variants,
+  });
 
   const usedAudienceIds = useMemo(
     () =>
@@ -113,8 +138,35 @@ const PersonalizationPanelContent = ({
   );
 
   const handleCreateVariant = (audienceId: string, audienceName: string) => {
-    reset();
+    resetCreate();
+    resetDelete();
     createVariant({ audienceTermId: audienceId, audienceName });
+  };
+
+  const handleDeleteClick = (variantId: string) => {
+    const variant = variants.find((v) => v.id === variantId);
+    if (variant) {
+      setVariantToDelete(variant);
+    }
+  };
+
+  const handleDeleteConfirm = () => {
+    if (variantToDelete) {
+      resetCreate();
+      resetDelete();
+      deleteVariant(
+        { variantId: variantToDelete.id },
+        {
+          onSuccess: () => {
+            setVariantToDelete(null);
+          },
+        }
+      );
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    setVariantToDelete(null);
   };
 
   if (!data.hasSnippet) {
@@ -127,15 +179,27 @@ const PersonalizationPanelContent = ({
         <h1 className={styles.title}>Personalization</h1>
       </div>
 
-      {isSuccess && (
-        <StatusMessage variant="success" onDismiss={reset}>
+      {createSuccess && (
+        <StatusMessage variant="success" onDismiss={resetCreate}>
           Variant created successfully!
         </StatusMessage>
       )}
 
-      {error && (
-        <StatusMessage variant="error" onDismiss={reset}>
-          {error}
+      {deleteSuccess && (
+        <StatusMessage variant="success" onDismiss={resetDelete}>
+          Variant deleted successfully!
+        </StatusMessage>
+      )}
+
+      {createError && (
+        <StatusMessage variant="error" onDismiss={resetCreate}>
+          {createError}
+        </StatusMessage>
+      )}
+
+      {deleteError && (
+        <StatusMessage variant="error" onDismiss={resetDelete}>
+          {deleteError}
         </StatusMessage>
       )}
 
@@ -155,6 +219,7 @@ const PersonalizationPanelContent = ({
         audienceTermMap={audienceTermMap}
         environmentId={environmentId}
         language={language}
+        onDeleteVariant={isBaseContent ? handleDeleteClick : undefined}
       />
 
       {isBaseContent && (
@@ -163,6 +228,20 @@ const PersonalizationPanelContent = ({
           usedAudienceIds={usedAudienceIds}
           onCreateVariant={handleCreateVariant}
           isCreating={isCreating}
+        />
+      )}
+
+      {variantToDelete && (
+        <ConfirmDeleteModal
+          variantName={variantToDelete.name}
+          audienceName={
+            variantToDelete.audienceTermId
+              ? audienceTermMap.get(variantToDelete.audienceTermId) ?? null
+              : null
+          }
+          onConfirm={handleDeleteConfirm}
+          onCancel={handleDeleteCancel}
+          isDeleting={isDeleting}
         />
       )}
     </>
