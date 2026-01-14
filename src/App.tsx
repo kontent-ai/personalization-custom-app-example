@@ -1,5 +1,5 @@
-import { useAppContext } from "./contexts/AppContext";
-import { PersonalizationPanel } from "./components/PersonalizationPanel/PersonalizationPanel";
+import { PersonalizationPanel } from "./components/PersonalizationPanel/PersonalizationPanel.tsx";
+import { useAppContext } from "./contexts/AppContext.tsx";
 
 const App = () => {
   const context = useAppContext();

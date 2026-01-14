@@ -1,6 +1,6 @@
-import { LanguageModels } from "@kontent-ai/management-sdk";
-import type { VariantInfo } from "../../types/variant.types";
-import { VariantCard } from "../VariantCard/VariantCard";
+import type { LanguageModels } from "@kontent-ai/management-sdk";
+import type { VariantInfo } from "../../types/variant.types.ts";
+import { VariantCard } from "../VariantCard/VariantCard.tsx";
 import styles from "./VariantList.module.css";
 
 interface VariantListProps {
@@ -41,9 +41,7 @@ export const VariantList = ({
             key={variant.id}
             variant={variant}
             audienceName={
-              variant.audienceTermId
-                ? audienceTermMap.get(variant.audienceTermId) ?? null
-                : null
+              variant.audienceTermId ? (audienceTermMap.get(variant.audienceTermId) ?? null) : null
             }
             environmentId={environmentId}
             language={language}

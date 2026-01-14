@@ -1,6 +1,6 @@
-import { LanguageModels } from "@kontent-ai/management-sdk";
-import type { VariantInfo } from "../../types/variant.types";
-import { StatusBadge } from "../StatusBadge/StatusBadge";
+import type { LanguageModels } from "@kontent-ai/management-sdk";
+import type { VariantInfo } from "../../types/variant.types.ts";
+import { StatusBadge } from "../StatusBadge/StatusBadge.tsx";
 import styles from "./VariantCard.module.css";
 
 interface VariantCardProps {
@@ -11,11 +11,7 @@ interface VariantCardProps {
   readonly onDelete?: (variantId: string) => void;
 }
 
-const buildKontentLink = (
-  environmentId: string,
-  languageId: string,
-  itemId: string
-): string =>
+const buildKontentLink = (environmentId: string, languageId: string, itemId: string): string =>
   `https://app.kontent.ai/${environmentId}/content-inventory/${languageId}/content/${itemId}`;
 
 export const VariantCard = ({
@@ -25,11 +21,7 @@ export const VariantCard = ({
   language,
   onDelete,
 }: VariantCardProps) => {
-  const kontentLink = buildKontentLink(
-    environmentId,
-    language.id,
-    variant.id
-  );
+  const kontentLink = buildKontentLink(environmentId, language.id, variant.id);
 
   const canDelete = !variant.isBaseContent && onDelete;
 
@@ -48,12 +40,7 @@ export const VariantCard = ({
         </div>
       </div>
       <div className={styles.actions}>
-        <a
-          href={kontentLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={styles.link}
-        >
+        <a href={kontentLink} target="_blank" rel="noopener noreferrer" className={styles.link}>
           Open
         </a>
         {canDelete && (
@@ -77,7 +64,7 @@ export const VariantCard = ({
               />
             </svg>
           </button>
-      )}
+        )}
       </div>
     </div>
   );

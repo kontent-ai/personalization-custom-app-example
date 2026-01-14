@@ -1,10 +1,6 @@
-import type { Context } from "@netlify/functions";
 import type { ElementContracts } from "@kontent-ai/management-sdk";
-import {
-  errorResponse,
-  getManagementClient,
-  jsonResponse,
-} from "./shared/management-client.ts";
+import type { Context } from "@netlify/functions";
+import { errorResponse, getManagementClient, jsonResponse } from "./shared/management-client.ts";
 
 interface CreateVariantRequest {
   readonly environmentId: string;
@@ -27,7 +23,7 @@ const buildVariantElements = (
   variantTypeElementId: string,
   audienceElementId: string,
   variantTermId: string,
-  audienceTermId: string
+  audienceTermId: string,
 ): Array<ElementContracts.IContentItemElementContract> =>
   sourceElements.map((element) => {
     if (element.element.id === variantTypeElementId) {
@@ -82,10 +78,7 @@ export default async (request: Request, _context: Context) => {
 
     const client = getManagementClient(environmentId);
 
-    const sourceItem = await client
-      .viewContentItem()
-      .byItemId(sourceItemId)
-      .toPromise();
+    const sourceItem = await client.viewContentItem().byItemId(sourceItemId).toPromise();
 
     const sourceVariant = await client
       .viewLanguageVariant()
@@ -100,9 +93,7 @@ export default async (request: Request, _context: Context) => {
       .withData({
         name: variantName,
         type: { id: sourceItem.data.type.id },
-        collection: sourceItem.data.collection
-          ? { id: sourceItem.data.collection.id }
-          : undefined,
+        collection: sourceItem.data.collection ? { id: sourceItem.data.collection.id } : undefined,
       })
       .toPromise();
 
@@ -111,7 +102,7 @@ export default async (request: Request, _context: Context) => {
       variantTypeElementId,
       audienceElementId,
       variantTermId,
-      audienceTermId
+      audienceTermId,
     );
 
     await client

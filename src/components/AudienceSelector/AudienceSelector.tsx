@@ -23,9 +23,7 @@ export const AudienceSelector = ({
 }: AudienceSelectorProps) => {
   const [selectedAudienceId, setSelectedAudienceId] = useState<string>("");
 
-  const availableAudiences = audiences.filter(
-    (audience) => !usedAudienceIds.has(audience.id)
-  );
+  const availableAudiences = audiences.filter((audience) => !usedAudienceIds.has(audience.id));
 
   const handleCreate = () => {
     const selectedAudience = audiences.find((a) => a.id === selectedAudienceId);
@@ -51,9 +49,7 @@ export const AudienceSelector = ({
           disabled={isDisabled}
         >
           <option value="">
-            {availableAudiences.length === 0
-              ? "All audiences used"
-              : "Select audience..."}
+            {availableAudiences.length === 0 ? "All audiences used" : "Select audience..."}
           </option>
           {availableAudiences.map((audience) => (
             <option key={audience.id} value={audience.id}>
@@ -78,9 +74,7 @@ export const AudienceSelector = ({
         </button>
       </div>
       {availableAudiences.length === 0 && audiences.length > 0 && (
-        <p className={styles.hint}>
-          All available audiences have been used for variants.
-        </p>
+        <p className={styles.hint}>All available audiences have been used for variants.</p>
       )}
     </div>
   );

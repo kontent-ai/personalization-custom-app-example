@@ -14,7 +14,7 @@ interface ApiResponse<T> {
 
 const callFunction = async <T>(
   functionName: string,
-  body: Record<string, unknown>
+  body: Record<string, unknown>,
 ): Promise<ApiResponse<T>> => {
   try {
     const response = await fetch(`/.netlify/functions/${functionName}`, {
@@ -25,7 +25,7 @@ const callFunction = async <T>(
       body: JSON.stringify(body),
     });
 
-    const result = await response.json() as ApiResponse<T>;
+    const result = (await response.json()) as ApiResponse<T>;
 
     if (!response.ok) {
       return { error: result.error ?? "Unknown error" };
@@ -41,14 +41,14 @@ const callFunction = async <T>(
 
 export const fetchItem = async (
   environmentId: string,
-  itemId: string
+  itemId: string,
 ): Promise<ApiResponse<ContentItemModels.ContentItem>> =>
   callFunction("fetch-item", { environmentId, itemId });
 
 export const fetchVariant = async (
   environmentId: string,
   itemId: string,
-  languageId: string
+  languageId: string,
 ): Promise<ApiResponse<LanguageVariantModels.ContentItemLanguageVariant>> =>
   callFunction("fetch-variant", { environmentId, itemId, languageId });
 
@@ -59,19 +59,19 @@ export interface ContentTypeWithSnippets {
 
 export const fetchContentType = async (
   environmentId: string,
-  typeId: string
+  typeId: string,
 ): Promise<ApiResponse<ContentTypeWithSnippets>> =>
   callFunction("fetch-content-type", { environmentId, typeId });
 
 export const fetchTaxonomy = async (
   environmentId: string,
-  codename: string
+  codename: string,
 ): Promise<ApiResponse<TaxonomyModels.Taxonomy>> =>
   callFunction("fetch-taxonomy", { environmentId, codename });
 
 export const fetchLanguage = async (
   environmentId: string,
-  languageId: string
+  languageId: string,
 ): Promise<ApiResponse<LanguageModels.LanguageModel>> =>
   callFunction("fetch-language", { environmentId, languageId });
 
@@ -92,9 +92,8 @@ export interface CreateVariantResponse {
 }
 
 export const createVariant = async (
-  params: CreateVariantParams
-): Promise<ApiResponse<CreateVariantResponse>> =>
-  callFunction("create-variant", { ...params });
+  params: CreateVariantParams,
+): Promise<ApiResponse<CreateVariantResponse>> => callFunction("create-variant", { ...params });
 
 export interface UpdateContentVariantsParams {
   readonly environmentId: string;
@@ -106,12 +105,12 @@ export interface UpdateContentVariantsParams {
 }
 
 export const updateContentVariants = async (
-  params: UpdateContentVariantsParams
+  params: UpdateContentVariantsParams,
 ): Promise<ApiResponse<{ success: boolean }>> =>
   callFunction("update-content-variants", { ...params });
 
 export const deleteItem = async (
   environmentId: string,
-  itemId: string
+  itemId: string,
 ): Promise<ApiResponse<{ success: boolean }>> =>
   callFunction("delete-item", { environmentId, itemId });

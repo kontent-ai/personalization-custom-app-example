@@ -1,9 +1,5 @@
 import type { Context } from "@netlify/functions";
-import {
-  errorResponse,
-  getManagementClient,
-  jsonResponse,
-} from "./shared/management-client.ts";
+import { errorResponse, getManagementClient, jsonResponse } from "./shared/management-client.ts";
 
 interface FetchLanguageRequest {
   readonly environmentId: string;
@@ -28,10 +24,7 @@ export default async (request: Request, _context: Context) => {
     }
 
     const client = getManagementClient(environmentId);
-    const response = await client
-      .viewLanguage()
-      .byLanguageId(languageId)
-      .toPromise();
+    const response = await client.viewLanguage().byLanguageId(languageId).toPromise();
 
     return jsonResponse(response.data);
   } catch (error) {

@@ -21,14 +21,10 @@ export const ConfirmDeleteModal = ({
         <h2 className={styles.title}>Delete Variant</h2>
       </div>
       <div className={styles.content}>
-        <p className={styles.message}>
-          Are you sure you want to delete this variant?
-        </p>
+        <p className={styles.message}>Are you sure you want to delete this variant?</p>
         <div className={styles.variantInfo}>
           <p className={styles.variantName}>{variantName}</p>
-          {audienceName && (
-            <p className={styles.audienceName}>Audience: {audienceName}</p>
-          )}
+          {audienceName && <p className={styles.audienceName}>Audience: {audienceName}</p>}
         </div>
         <p className={styles.warning}>This action cannot be undone.</p>
       </div>

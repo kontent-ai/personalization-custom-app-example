@@ -1,0 +1,44 @@
+[
+  {
+    "name": "Variant Type",
+    "codename": "variant_type",
+    "terms": [
+      {
+        "name": "Base Content",
+        "codename": "base_content",
+        "terms": []
+      },
+      {
+        "name": "Variant",
+        "codename": "variant",
+        "terms": []
+      }
+    ]
+  },
+  {
+    "name": "Personalization Audiences",
+    "codename": "personalization_audiences",
+    "terms": [
+      {
+        "name": "New Visitors",
+        "codename": "new_visitors",
+        "terms": []
+      },
+      {
+        "name": "Returning Visitors",
+        "codename": "returning_visitors",
+        "terms": []
+      },
+      {
+        "name": "Premium Members",
+        "codename": "premium_members",
+        "terms": []
+      },
+      {
+        "name": "Enterprise Customers",
+        "codename": "enterprise_customers",
+        "terms": []
+      }
+    ]
+  }
+]

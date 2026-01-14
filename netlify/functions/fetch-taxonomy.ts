@@ -1,9 +1,5 @@
 import type { Context } from "@netlify/functions";
-import {
-  errorResponse,
-  getManagementClient,
-  jsonResponse,
-} from "./shared/management-client.ts";
+import { errorResponse, getManagementClient, jsonResponse } from "./shared/management-client.ts";
 
 interface FetchTaxonomyRequest {
   readonly environmentId: string;
@@ -31,10 +27,7 @@ export default async (request: Request, _context: Context) => {
     }
 
     const client = getManagementClient(environmentId);
-    const response = await client
-      .getTaxonomy()
-      .byTaxonomyCodename(codename)
-      .toPromise();
+    const response = await client.getTaxonomy().byTaxonomyCodename(codename).toPromise();
 
     return jsonResponse(response.data);
   } catch (error) {

@@ -1,10 +1,6 @@
-import type { Context } from "@netlify/functions";
 import type { ElementContracts } from "@kontent-ai/management-sdk";
-import {
-  errorResponse,
-  getManagementClient,
-  jsonResponse,
-} from "./shared/management-client.ts";
+import type { Context } from "@netlify/functions";
+import { errorResponse, getManagementClient, jsonResponse } from "./shared/management-client.ts";
 
 interface UpdateContentVariantsRequest {
   readonly environmentId: string;
@@ -19,7 +15,7 @@ const updateContentVariantsElement = (
   elements: ReadonlyArray<ElementContracts.IContentItemElementContract>,
   contentVariantsElementId: string,
   variantItemId: string,
-  operation: "add" | "remove"
+  operation: "add" | "remove",
 ): Array<ElementContracts.IContentItemElementContract> =>
   elements.map((element) => {
     if (element.element.id !== contentVariantsElementId) {
@@ -88,7 +84,7 @@ export default async (request: Request, _context: Context) => {
       currentVariant.rawData.elements,
       contentVariantsElementId,
       variantItemId,
-      operation
+      operation,
     );
 
     await client

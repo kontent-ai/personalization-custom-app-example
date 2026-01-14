@@ -1,9 +1,5 @@
 import type { Context } from "@netlify/functions";
-import {
-  errorResponse,
-  getManagementClient,
-  jsonResponse,
-} from "./shared/management-client.ts";
+import { errorResponse, getManagementClient, jsonResponse } from "./shared/management-client.ts";
 
 interface FetchContentTypeRequest {
   readonly environmentId: string;
@@ -39,9 +35,9 @@ export default async (request: Request, _context: Context) => {
       .filter((id): id is string => id !== undefined);
 
     const snippets = await Promise.all(
-      snippetIds.map(async (snippetId) =>
-        await client.viewContentTypeSnippet().byTypeId(snippetId).toPromise()
-      )
+      snippetIds.map(
+        async (snippetId) => await client.viewContentTypeSnippet().byTypeId(snippetId).toPromise(),
+      ),
     );
 
     return jsonResponse({

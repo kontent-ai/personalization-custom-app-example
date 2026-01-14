@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ELEMENT_SUFFIXES, findElementIdByCodenameSuffix } from "../constants/codenames";
-import { queryKeys } from "../constants/queryKeys";
-import { deleteItem, updateContentVariants } from "../services/api";
-import type { CurrentItemData, VariantInfo } from "../types/variant.types";
+import { ELEMENT_SUFFIXES, findElementIdByCodenameSuffix } from "../constants/codenames.ts";
+import { queryKeys } from "../constants/queryKeys.ts";
+import { deleteItem, updateContentVariants } from "../services/api.ts";
+import type { CurrentItemData, VariantInfo } from "../types/variant.types.ts";
 
 interface UseDeleteVariantParams {
   readonly environmentId: string;
@@ -27,7 +27,7 @@ export const useDeleteVariant = ({
 
   const contentVariantsElementId = findElementIdByCodenameSuffix(
     currentItemData.elementCodenames,
-    ELEMENT_SUFFIXES.CONTENT_VARIANTS
+    ELEMENT_SUFFIXES.CONTENT_VARIANTS,
   );
 
   const mutation = useMutation({
@@ -50,8 +50,8 @@ export const useDeleteVariant = ({
             contentVariantsElementId,
             variantItemId: variantId,
             operation: "remove",
-          })
-        )
+          }),
+        ),
       );
 
       const failedUpdate = updateResults.find((r) => r.error);
@@ -70,8 +70,7 @@ export const useDeleteVariant = ({
     onSuccess: (data) => {
       queryClient.setQueryData<ReadonlyArray<VariantInfo>>(
         queryKeys.existingVariants(environmentId, baseItemId, languageId),
-        (oldVariants) =>
-          oldVariants?.filter((v) => v.id !== data.deletedVariantId) ?? []
+        (oldVariants) => oldVariants?.filter((v) => v.id !== data.deletedVariantId) ?? [],
       );
     },
   });

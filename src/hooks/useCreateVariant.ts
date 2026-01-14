@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ELEMENT_SUFFIXES, findElementIdByCodenameSuffix } from "../constants/codenames";
-import { queryKeys } from "../constants/queryKeys";
-import { createVariant, updateContentVariants } from "../services/api";
-import type { CurrentItemData, VariantInfo } from "../types/variant.types";
+import { ELEMENT_SUFFIXES, findElementIdByCodenameSuffix } from "../constants/codenames.ts";
+import { queryKeys } from "../constants/queryKeys.ts";
+import { createVariant, updateContentVariants } from "../services/api.ts";
+import type { CurrentItemData, VariantInfo } from "../types/variant.types.ts";
 
 interface UseCreateVariantParams {
   readonly environmentId: string;
@@ -30,17 +30,17 @@ export const useCreateVariant = ({
 
   const variantTypeElementId = findElementIdByCodenameSuffix(
     currentItemData.elementCodenames,
-    ELEMENT_SUFFIXES.VARIANT_TYPE
+    ELEMENT_SUFFIXES.VARIANT_TYPE,
   );
 
   const audienceElementId = findElementIdByCodenameSuffix(
     currentItemData.elementCodenames,
-    ELEMENT_SUFFIXES.PERSONALIZATION_AUDIENCE
+    ELEMENT_SUFFIXES.PERSONALIZATION_AUDIENCE,
   );
 
   const contentVariantsElementId = findElementIdByCodenameSuffix(
     currentItemData.elementCodenames,
-    ELEMENT_SUFFIXES.CONTENT_VARIANTS
+    ELEMENT_SUFFIXES.CONTENT_VARIANTS,
   );
 
   const mutation = useMutation({
@@ -66,10 +66,7 @@ export const useCreateVariant = ({
 
       const newVariantId = createResult.data.itemId;
 
-      const allItemsToUpdate = [
-        baseItemId,
-        ...existingVariants.map((v) => v.id),
-      ];
+      const allItemsToUpdate = [baseItemId, ...existingVariants.map((v) => v.id)];
 
       const updateResults = await Promise.all(
         allItemsToUpdate.map(async (itemId) =>
@@ -80,8 +77,8 @@ export const useCreateVariant = ({
             contentVariantsElementId,
             variantItemId: newVariantId,
             operation: "add",
-          })
-        )
+          }),
+        ),
       );
 
       const failedUpdate = updateResults.find((r) => r.error);
@@ -101,7 +98,7 @@ export const useCreateVariant = ({
 
       queryClient.setQueryData<ReadonlyArray<VariantInfo>>(
         queryKeys.existingVariants(environmentId, baseItemId, languageId),
-        (oldVariants) => (oldVariants ? [...oldVariants, newVariant] : [newVariant])
+        (oldVariants) => (oldVariants ? [...oldVariants, newVariant] : [newVariant]),
       );
     },
   });

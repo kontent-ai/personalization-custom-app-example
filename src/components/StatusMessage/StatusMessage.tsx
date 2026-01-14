@@ -15,11 +15,7 @@ const variantStyles: Record<StatusVariant, string> = {
   info: styles.info,
 };
 
-export const StatusMessage = ({
-  variant,
-  children,
-  onDismiss,
-}: StatusMessageProps) => (
+export const StatusMessage = ({ variant, children, onDismiss }: StatusMessageProps) => (
   <div className={`${styles.container} ${variantStyles[variant]}`}>
     <span className={styles.message}>{children}</span>
     {onDismiss && (
@@ -29,12 +25,7 @@ export const StatusMessage = ({
         onClick={onDismiss}
         aria-label="Dismiss message"
       >
-        <svg
-          className={styles.dismissIcon}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
+        <svg className={styles.dismissIcon} fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
             strokeLinecap="round"
             strokeLinejoin="round"

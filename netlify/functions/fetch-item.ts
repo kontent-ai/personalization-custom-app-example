@@ -1,9 +1,5 @@
 import type { Context } from "@netlify/functions";
-import {
-  errorResponse,
-  getManagementClient,
-  jsonResponse,
-} from "./shared/management-client.ts";
+import { errorResponse, getManagementClient, jsonResponse } from "./shared/management-client.ts";
 
 interface FetchItemRequest {
   readonly environmentId: string;

@@ -1,18 +1,18 @@
 import { Suspense, useMemo, useState } from "react";
 import { ErrorBoundary, type FallbackProps } from "react-error-boundary";
-import { useAudienceTaxonomy } from "../../hooks/useAudienceTaxonomy";
-import { useCreateVariant } from "../../hooks/useCreateVariant";
-import { useCurrentItem } from "../../hooks/useCurrentItem";
-import { useDeleteVariant } from "../../hooks/useDeleteVariant";
-import { useExistingVariants } from "../../hooks/useExistingVariants";
-import { useLanguage } from "../../hooks/useLanguage";
-import { useVariantTermId } from "../../hooks/useVariantTermId";
-import type { VariantInfo } from "../../types/variant.types";
-import { AudienceSelector } from "../AudienceSelector/AudienceSelector";
-import { ConfirmDeleteModal } from "../ConfirmDeleteModal/ConfirmDeleteModal";
-import { StatusBadge } from "../StatusBadge/StatusBadge";
-import { StatusMessage } from "../StatusMessage/StatusMessage";
-import { VariantList } from "../VariantList/VariantList";
+import { useAudienceTaxonomy } from "../../hooks/useAudienceTaxonomy.ts";
+import { useCreateVariant } from "../../hooks/useCreateVariant.ts";
+import { useCurrentItem } from "../../hooks/useCurrentItem.ts";
+import { useDeleteVariant } from "../../hooks/useDeleteVariant.ts";
+import { useExistingVariants } from "../../hooks/useExistingVariants.ts";
+import { useLanguage } from "../../hooks/useLanguage.ts";
+import { useVariantTermId } from "../../hooks/useVariantTermId.ts";
+import type { VariantInfo } from "../../types/variant.types.ts";
+import { AudienceSelector } from "../AudienceSelector/AudienceSelector.tsx";
+import { ConfirmDeleteModal } from "../ConfirmDeleteModal/ConfirmDeleteModal.tsx";
+import { StatusBadge } from "../StatusBadge/StatusBadge.tsx";
+import { StatusMessage } from "../StatusMessage/StatusMessage.tsx";
+import { VariantList } from "../VariantList/VariantList.tsx";
 import styles from "./PersonalizationPanel.module.css";
 
 interface PersonalizationPanelProps {
@@ -30,12 +30,7 @@ const LoadingState = () => (
 
 const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => (
   <div className={styles.errorContainer}>
-    <svg
-      className={styles.errorIcon}
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-    >
+    <svg className={styles.errorIcon} fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -48,11 +43,7 @@ const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => (
       <p className={styles.errorMessage}>
         {error instanceof Error ? error.message : "An unknown error occurred"}
       </p>
-      <button
-        type="button"
-        className={styles.retryButton}
-        onClick={resetErrorBoundary}
-      >
+      <button type="button" className={styles.retryButton} onClick={resetErrorBoundary}>
         Try again
       </button>
     </div>
@@ -62,9 +53,8 @@ const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => (
 const NoSnippetState = () => (
   <div className={styles.infoContainer}>
     <p className={styles.infoText}>
-      This content type does not have the personalization snippet attached.
-      The snippet should include variant_type, personalization_audience, and
-      content_variants elements.
+      This content type does not have the personalization snippet attached. The snippet should
+      include variant_type, personalization_audience, and content_variants elements.
     </p>
   </div>
 );
@@ -80,19 +70,11 @@ const PersonalizationPanelContent = ({
   itemId,
   languageId,
 }: PersonalizationPanelContentProps) => {
-  const [variantToDelete, setVariantToDelete] = useState<VariantInfo | null>(
-    null
-  );
+  const [variantToDelete, setVariantToDelete] = useState<VariantInfo | null>(null);
 
   const { data } = useCurrentItem(environmentId, itemId, languageId);
-  const { terms: audienceTerms, termMap: audienceTermMap } =
-    useAudienceTaxonomy(environmentId);
-  const { variants } = useExistingVariants(
-    environmentId,
-    languageId,
-    itemId,
-    data
-  );
+  const { terms: audienceTerms, termMap: audienceTermMap } = useAudienceTaxonomy(environmentId);
+  const { variants } = useExistingVariants(environmentId, languageId, itemId, data);
   const { language } = useLanguage(environmentId, languageId);
   const { variantTermId } = useVariantTermId(environmentId);
 
@@ -132,9 +114,9 @@ const PersonalizationPanelContent = ({
       new Set(
         variants
           .filter((v) => !v.isBaseContent && v.audienceTermId)
-          .map((v) => v.audienceTermId as string)
+          .map((v) => v.audienceTermId as string),
       ),
-    [variants]
+    [variants],
   );
 
   const handleCreateVariant = (audienceId: string, audienceName: string) => {
@@ -160,7 +142,7 @@ const PersonalizationPanelContent = ({
           onSuccess: () => {
             setVariantToDelete(null);
           },
-        }
+        },
       );
     }
   };
@@ -236,7 +218,7 @@ const PersonalizationPanelContent = ({
           variantName={variantToDelete.name}
           audienceName={
             variantToDelete.audienceTermId
-              ? audienceTermMap.get(variantToDelete.audienceTermId) ?? null
+              ? (audienceTermMap.get(variantToDelete.audienceTermId) ?? null)
               : null
           }
           onConfirm={handleDeleteConfirm}

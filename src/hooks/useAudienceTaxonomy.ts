@@ -1,9 +1,9 @@
-import { useMemo } from "react";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import type { TaxonomyModels } from "@kontent-ai/management-sdk";
-import { TAXONOMY_CODENAMES } from "../constants/codenames";
-import { queryKeys } from "../constants/queryKeys";
-import { fetchTaxonomy } from "../services/api";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
+import { TAXONOMY_CODENAMES } from "../constants/codenames.ts";
+import { queryKeys } from "../constants/queryKeys.ts";
+import { fetchTaxonomy } from "../services/api.ts";
 
 interface AudienceTerm {
   readonly id: string;
@@ -11,9 +11,7 @@ interface AudienceTerm {
   readonly codename: string;
 }
 
-const flattenTerms = (
-  terms: ReadonlyArray<TaxonomyModels.Taxonomy>
-): ReadonlyArray<AudienceTerm> =>
+const flattenTerms = (terms: ReadonlyArray<TaxonomyModels.Taxonomy>): ReadonlyArray<AudienceTerm> =>
   terms.flatMap((term) => [
     { id: term.id, name: term.name, codename: term.codename },
     ...flattenTerms(term.terms),
@@ -25,7 +23,7 @@ export const useAudienceTaxonomy = (environmentId: string) => {
     queryFn: async () => {
       const result = await fetchTaxonomy(
         environmentId,
-        TAXONOMY_CODENAMES.PERSONALIZATION_AUDIENCES
+        TAXONOMY_CODENAMES.PERSONALIZATION_AUDIENCES,
       );
       if (result.error || !result.data) {
         throw new Error(result.error ?? "Failed to fetch audience taxonomy");

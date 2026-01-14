@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { queryKeys } from "../constants/queryKeys";
-import { fetchLanguage } from "../services/api";
+import { queryKeys } from "../constants/queryKeys.ts";
+import { fetchLanguage } from "../services/api.ts";
 
 export const useLanguage = (environmentId: string, languageId: string) => {
   const { data } = useSuspenseQuery({

@@ -57,3 +57,6 @@ deno.lock
 
 # Netlify
 .netlify
+
+# Content model (customized from .example)
+scripts/content-model/taxonomyGroups.json

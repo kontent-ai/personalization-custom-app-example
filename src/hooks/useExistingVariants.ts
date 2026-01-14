@@ -1,47 +1,43 @@
+import type { ElementModels, TaxonomyModels } from "@kontent-ai/management-sdk";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { z } from "zod";
-import type { ElementModels, TaxonomyModels } from "@kontent-ai/management-sdk";
 import {
   ELEMENT_SUFFIXES,
+  findElementIdByCodenameSuffix,
   TAXONOMY_CODENAMES,
   VARIANT_TYPE_TERMS,
-  findElementIdByCodenameSuffix,
-} from "../constants/codenames";
-import { queryKeys } from "../constants/queryKeys";
-import { fetchItem, fetchTaxonomy, fetchVariant } from "../services/api";
-import type { CurrentItemData, VariantInfo } from "../types/variant.types";
-import { notNull } from "../utils/function";
+} from "../constants/codenames.ts";
+import { queryKeys } from "../constants/queryKeys.ts";
+import { fetchItem, fetchTaxonomy, fetchVariant } from "../services/api.ts";
+import type { CurrentItemData, VariantInfo } from "../types/variant.types.ts";
+import { notNull } from "../utils/function.ts";
 
 const referenceArraySchema = z.array(z.object({ id: z.string() }));
 
 const findVariantTermId = (
-  taxonomyTerms: ReadonlyArray<TaxonomyModels.Taxonomy>
+  taxonomyTerms: ReadonlyArray<TaxonomyModels.Taxonomy>,
 ): string | undefined =>
   taxonomyTerms
     .map((term) =>
-      term.codename === VARIANT_TYPE_TERMS.VARIANT
-        ? term.id
-        : findVariantTermId(term.terms)
+      term.codename === VARIANT_TYPE_TERMS.VARIANT ? term.id : findVariantTermId(term.terms),
     )
     .find((id) => id !== undefined);
 
 const checkIsVariant = (
   variantElements: ReadonlyArray<ElementModels.ContentItemElement>,
   elementCodenames: ReadonlyMap<string, string>,
-  variantTermId: string
+  variantTermId: string,
 ): boolean => {
   const variantTypeElementId = findElementIdByCodenameSuffix(
     elementCodenames,
-    ELEMENT_SUFFIXES.VARIANT_TYPE
+    ELEMENT_SUFFIXES.VARIANT_TYPE,
   );
 
   if (!variantTypeElementId) {
     return false;
   }
 
-  const variantTypeElement = variantElements.find(
-    (el) => el.element.id === variantTypeElementId
-  );
+  const variantTypeElement = variantElements.find((el) => el.element.id === variantTypeElementId);
 
   if (!variantTypeElement) {
     return false;
@@ -57,11 +53,11 @@ const checkIsVariant = (
 
 const extractLinkedItemIds = (
   variantElements: ReadonlyArray<ElementModels.ContentItemElement>,
-  elementCodenames: ReadonlyMap<string, string>
+  elementCodenames: ReadonlyMap<string, string>,
 ): ReadonlyArray<string> => {
   const contentVariantsElementId = findElementIdByCodenameSuffix(
     elementCodenames,
-    ELEMENT_SUFFIXES.CONTENT_VARIANTS
+    ELEMENT_SUFFIXES.CONTENT_VARIANTS,
   );
 
   if (!contentVariantsElementId) {
@@ -69,7 +65,7 @@ const extractLinkedItemIds = (
   }
 
   const contentVariantsElement = variantElements.find(
-    (el) => el.element.id === contentVariantsElementId
+    (el) => el.element.id === contentVariantsElementId,
   );
 
   if (!contentVariantsElement) {
@@ -87,20 +83,18 @@ const extractLinkedItemIds = (
 
 const extractAudienceTermId = (
   variantElements: ReadonlyArray<ElementModels.ContentItemElement>,
-  elementCodenames: ReadonlyMap<string, string>
+  elementCodenames: ReadonlyMap<string, string>,
 ): string | null => {
   const audienceElementId = findElementIdByCodenameSuffix(
     elementCodenames,
-    ELEMENT_SUFFIXES.PERSONALIZATION_AUDIENCE
+    ELEMENT_SUFFIXES.PERSONALIZATION_AUDIENCE,
   );
 
   if (!audienceElementId) {
     return null;
   }
 
-  const audienceElement = variantElements.find(
-    (el) => el.element.id === audienceElementId
-  );
+  const audienceElement = variantElements.find((el) => el.element.id === audienceElementId);
 
   if (!audienceElement) {
     return null;
@@ -119,7 +113,7 @@ const fetchExistingVariantsData = async (
   environmentId: string,
   languageId: string,
   currentItemId: string,
-  currentItemData: CurrentItemData
+  currentItemData: CurrentItemData,
 ): Promise<ReadonlyArray<VariantInfo>> => {
   if (!currentItemData.hasSnippet) {
     return [];
@@ -127,17 +121,14 @@ const fetchExistingVariantsData = async (
 
   const linkedItemIds = extractLinkedItemIds(
     currentItemData.variant.elements,
-    currentItemData.elementCodenames
+    currentItemData.elementCodenames,
   );
 
   if (linkedItemIds.length === 0) {
     return [];
   }
 
-  const taxonomyResult = await fetchTaxonomy(
-    environmentId,
-    TAXONOMY_CODENAMES.VARIANT_TYPE
-  );
+  const taxonomyResult = await fetchTaxonomy(environmentId, TAXONOMY_CODENAMES.VARIANT_TYPE);
 
   const variantTermId = taxonomyResult.data
     ? findVariantTermId(taxonomyResult.data.terms)
@@ -163,13 +154,13 @@ const fetchExistingVariantsData = async (
 
     const audienceTermId = extractAudienceTermId(
       variantResult.data.elements,
-      currentItemData.elementCodenames
+      currentItemData.elementCodenames,
     );
 
     const isVariant = checkIsVariant(
       variantResult.data.elements,
       currentItemData.elementCodenames,
-      variantTermId
+      variantTermId,
     );
 
     return {
@@ -197,7 +188,7 @@ export const useExistingVariants = (
   environmentId: string,
   languageId: string,
   currentItemId: string,
-  currentItemData: CurrentItemData
+  currentItemData: CurrentItemData,
 ) => {
   const { data } = useSuspenseQuery({
     queryKey: queryKeys.existingVariants(environmentId, currentItemId, languageId),

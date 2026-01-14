@@ -16,7 +16,7 @@ export const VARIANT_TYPE_TERMS = {
 
 export const findElementIdByCodenameSuffix = (
   elementCodenames: ReadonlyMap<string, string>,
-  suffix: string
+  suffix: string,
 ): string | undefined => {
   const entries = Array.from(elementCodenames.entries());
   const found = entries.find(([_, codename]) => codename.endsWith(suffix));

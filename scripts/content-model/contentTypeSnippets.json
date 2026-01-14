@@ -1,0 +1,36 @@
+[
+  {
+    "name": "Personalization",
+    "codename": "personalization",
+    "elements": [
+      {
+        "name": "Variant Type",
+        "codename": "variant_type",
+        "type": "taxonomy",
+        "taxonomy_group": {
+          "codename": "variant_type"
+        },
+        "guidelines": "Select whether this item is base content or a personalized variant."
+      },
+      {
+        "name": "Personalization Audience",
+        "codename": "personalization_audience",
+        "type": "taxonomy",
+        "taxonomy_group": {
+          "codename": "personalization_audiences"
+        },
+        "guidelines": "Select the target audience for this personalized variant. Leave empty for base content."
+      },
+      {
+        "name": "Content Variants",
+        "codename": "content_variants",
+        "type": "modular_content",
+        "guidelines": "Links to all content variants including the base content. This field is managed by the Personalization custom app.",
+        "item_count_limit": {
+          "value": 50,
+          "condition": "at_most"
+        }
+      }
+    ]
+  }
+]

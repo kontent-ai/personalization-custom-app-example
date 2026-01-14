@@ -1,6 +1,5 @@
 export const queryKeys = {
-  item: (environmentId: string, itemId: string) =>
-    ["item", environmentId, itemId] as const,
+  item: (environmentId: string, itemId: string) => ["item", environmentId, itemId] as const,
 
   variant: (environmentId: string, itemId: string, languageId: string) =>
     ["variant", environmentId, itemId, languageId] as const,
