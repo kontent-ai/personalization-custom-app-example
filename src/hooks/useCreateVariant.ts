@@ -60,6 +60,7 @@ export const useCreateVariant = ({
         variantTermId,
         variantTypeElementId,
         audienceElementId,
+        contentVariantsElementId,
       });
 
       if (createResult.error || !createResult.data) {

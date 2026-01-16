@@ -1,5 +1,6 @@
 import type { ElementContracts } from "@kontent-ai/management-sdk";
 import type { Context } from "@netlify/functions";
+import { updateContentVariantsElement } from "./shared/element-utils.ts";
 import { errorResponse, getManagementClient, jsonResponse } from "./shared/management-client.ts";
 
 interface CreateVariantRequest {
@@ -11,6 +12,7 @@ interface CreateVariantRequest {
   readonly variantTermId: string;
   readonly variantTypeElementId: string;
   readonly audienceElementId: string;
+  readonly contentVariantsElementId: string;
 }
 
 interface CreateVariantResponse {
@@ -61,6 +63,7 @@ export default async (request: Request, _context: Context) => {
       variantTermId,
       variantTypeElementId,
       audienceElementId,
+      contentVariantsElementId,
     } = body;
 
     if (
@@ -71,7 +74,8 @@ export default async (request: Request, _context: Context) => {
       !audienceName ||
       !variantTermId ||
       !variantTypeElementId ||
-      !audienceElementId
+      !audienceElementId ||
+      !contentVariantsElementId
     ) {
       return errorResponse("Missing required fields", 400);
     }
@@ -105,12 +109,19 @@ export default async (request: Request, _context: Context) => {
       audienceTermId,
     );
 
+    const elementsWithSourceLinked = updateContentVariantsElement(
+      variantElements,
+      contentVariantsElementId,
+      sourceItemId,
+      "add",
+    );
+
     await client
       .upsertLanguageVariant()
       .byItemId(newItem.data.id)
       .byLanguageId(languageId)
       .withData(() => ({
-        elements: variantElements,
+        elements: elementsWithSourceLinked,
       }))
       .toPromise();
 

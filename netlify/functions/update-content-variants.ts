@@ -1,5 +1,5 @@
-import type { ElementContracts } from "@kontent-ai/management-sdk";
 import type { Context } from "@netlify/functions";
+import { updateContentVariantsElement } from "./shared/element-utils.ts";
 import { errorResponse, getManagementClient, jsonResponse, tryCreateNewVersion } from "./shared/management-client.ts";
 
 interface UpdateContentVariantsRequest {
@@ -10,32 +10,6 @@ interface UpdateContentVariantsRequest {
   readonly variantItemId: string;
   readonly operation: "add" | "remove";
 }
-
-const updateContentVariantsElement = (
-  elements: ReadonlyArray<ElementContracts.IContentItemElementContract>,
-  contentVariantsElementId: string,
-  variantItemId: string,
-  operation: "add" | "remove",
-): Array<ElementContracts.IContentItemElementContract> =>
-  elements.map((element) => {
-    if (element.element.id !== contentVariantsElementId) {
-      return element;
-    }
-
-    const currentValue = Array.isArray(element.value)
-      ? (element.value as ReadonlyArray<{ id: string }>)
-      : [];
-
-    const newValue =
-      operation === "add"
-        ? [...currentValue, { id: variantItemId }]
-        : currentValue.filter((item) => item.id !== variantItemId);
-
-    return {
-      ...element,
-      value: newValue,
-    };
-  });
 
 export default async (request: Request, _context: Context) => {
   if (request.method === "OPTIONS") {

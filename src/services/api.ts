@@ -84,6 +84,7 @@ export interface CreateVariantParams {
   readonly variantTermId: string;
   readonly variantTypeElementId: string;
   readonly audienceElementId: string;
+  readonly contentVariantsElementId: string;
 }
 
 export interface CreateVariantResponse {
