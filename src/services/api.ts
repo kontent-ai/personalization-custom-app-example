@@ -112,5 +112,6 @@ export const updateContentVariants = async (
 export const deleteItem = async (
   environmentId: string,
   itemId: string,
+  languageId: string,
 ): Promise<ApiResponse<{ success: boolean }>> =>
-  callFunction("delete-item", { environmentId, itemId });
+  callFunction("delete-item", { environmentId, itemId, languageId });

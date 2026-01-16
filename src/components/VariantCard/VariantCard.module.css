@@ -75,9 +75,14 @@
     background-color 0.15s ease;
 }
 
-.deleteButton:hover {
+.deleteButton:hover:not(.deleteButtonDisabled) {
   color: var(--color-error);
   background-color: var(--color-error-bg);
+}
+
+.deleteButtonDisabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .deleteIcon {

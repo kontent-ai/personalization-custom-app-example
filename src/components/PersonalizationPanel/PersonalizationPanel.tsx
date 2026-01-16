@@ -80,6 +80,14 @@ const PersonalizationPanelContent = ({
 
   const isBaseContent = !data.isVariant;
 
+  const actualBaseItemId = useMemo(() => {
+    if (isBaseContent) {
+      return itemId;
+    }
+    const baseItem = variants.find((v) => v.isBaseContent);
+    return baseItem?.id ?? itemId;
+  }, [isBaseContent, itemId, variants]);
+
   const {
     createVariant,
     isCreating,
@@ -91,7 +99,8 @@ const PersonalizationPanelContent = ({
     languageId,
     currentItemData: data,
     variantTermId,
-    baseItemId: itemId,
+    baseItemId: actualBaseItemId,
+    currentItemId: itemId,
     existingVariants: variants,
   });
 
@@ -105,7 +114,8 @@ const PersonalizationPanelContent = ({
     environmentId,
     languageId,
     currentItemData: data,
-    baseItemId: itemId,
+    baseItemId: actualBaseItemId,
+    currentItemId: itemId,
     existingVariants: variants,
   });
 
@@ -201,17 +211,16 @@ const PersonalizationPanelContent = ({
         audienceTermMap={audienceTermMap}
         environmentId={environmentId}
         language={language}
-        onDeleteVariant={isBaseContent ? handleDeleteClick : undefined}
+        onDeleteVariant={handleDeleteClick}
+        currentItemId={itemId}
       />
 
-      {isBaseContent && (
-        <AudienceSelector
-          audiences={audienceTerms}
-          usedAudienceIds={usedAudienceIds}
-          onCreateVariant={handleCreateVariant}
-          isCreating={isCreating}
-        />
-      )}
+      <AudienceSelector
+        audiences={audienceTerms}
+        usedAudienceIds={usedAudienceIds}
+        onCreateVariant={handleCreateVariant}
+        isCreating={isCreating}
+      />
 
       {variantToDelete && (
         <ConfirmDeleteModal

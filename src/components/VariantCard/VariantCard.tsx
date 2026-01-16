@@ -9,6 +9,7 @@ interface VariantCardProps {
   readonly environmentId: string;
   readonly language: LanguageModels.LanguageModel;
   readonly onDelete?: (variantId: string) => void;
+  readonly isCurrentItem: boolean;
 }
 
 const buildKontentLink = (environmentId: string, languageId: string, itemId: string): string =>
@@ -20,10 +21,10 @@ export const VariantCard = ({
   environmentId,
   language,
   onDelete,
+  isCurrentItem,
 }: VariantCardProps) => {
   const kontentLink = buildKontentLink(environmentId, language.id, variant.id);
-
-  const canDelete = !variant.isBaseContent && onDelete;
+  const cannotDeleteMessage = createCannotDeleteMessage(variant, isCurrentItem);
 
   return (
     <div className={styles.card}>
@@ -43,29 +44,39 @@ export const VariantCard = ({
         <a href={kontentLink} target="_blank" rel="noopener noreferrer" className={styles.link}>
           Open
         </a>
-        {canDelete && (
-          <button
-            type="button"
-            className={styles.deleteButton}
-            onClick={() => onDelete(variant.id)}
-            aria-label={`Delete ${variant.name}`}
+        <button
+          type="button"
+          className={`${styles.deleteButton} ${cannotDeleteMessage ? styles.deleteButtonDisabled : ""}`}
+          onClick={() => !cannotDeleteMessage && onDelete?.(variant.id)}
+          disabled={!!cannotDeleteMessage}
+          title={cannotDeleteMessage ?? undefined}
+          aria-label={cannotDeleteMessage ?? `Delete ${variant.name}`}
+        >
+          <svg
+            className={styles.deleteIcon}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
           >
-            <svg
-              className={styles.deleteIcon}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-              />
-            </svg>
-          </button>
-        )}
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+            />
+          </svg>
+        </button>
       </div>
     </div>
   );
+};
+
+const createCannotDeleteMessage = (variant: VariantInfo, isCurrentItem: boolean): string | null => {
+  if (variant.isBaseContent) {
+    return "Cannot delete base content";
+  }
+  if (isCurrentItem) {
+    return "Cannot delete currently edited variant";
+  }
+  return null;
 };

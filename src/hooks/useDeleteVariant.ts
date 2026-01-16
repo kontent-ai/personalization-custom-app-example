@@ -9,6 +9,7 @@ interface UseDeleteVariantParams {
   readonly languageId: string;
   readonly currentItemData: CurrentItemData;
   readonly baseItemId: string;
+  readonly currentItemId: string;
   readonly existingVariants: ReadonlyArray<VariantInfo>;
 }
 
@@ -21,6 +22,7 @@ export const useDeleteVariant = ({
   languageId,
   currentItemData,
   baseItemId,
+  currentItemId,
   existingVariants,
 }: UseDeleteVariantParams) => {
   const queryClient = useQueryClient();
@@ -39,6 +41,7 @@ export const useDeleteVariant = ({
       const allItemsToUpdate = [
         baseItemId,
         ...existingVariants.filter((v) => v.id !== variantId).map((v) => v.id),
+        ...(currentItemId !== baseItemId && currentItemId !== variantId ? [currentItemId] : []),
       ];
 
       const updateResults = await Promise.all(
@@ -59,7 +62,7 @@ export const useDeleteVariant = ({
         throw new Error(failedUpdate.error);
       }
 
-      const deleteResult = await deleteItem(environmentId, variantId);
+      const deleteResult = await deleteItem(environmentId, variantId, languageId);
 
       if (deleteResult.error) {
         throw new Error(deleteResult.error);
@@ -69,7 +72,7 @@ export const useDeleteVariant = ({
     },
     onSuccess: (data) => {
       queryClient.setQueryData<ReadonlyArray<VariantInfo>>(
-        queryKeys.existingVariants(environmentId, baseItemId, languageId),
+        queryKeys.existingVariants(environmentId, currentItemId, languageId),
         (oldVariants) => oldVariants?.filter((v) => v.id !== data.deletedVariantId) ?? [],
       );
     },

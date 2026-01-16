@@ -1,6 +1,6 @@
 import type { ElementContracts } from "@kontent-ai/management-sdk";
 import type { Context } from "@netlify/functions";
-import { errorResponse, getManagementClient, jsonResponse } from "./shared/management-client.ts";
+import { errorResponse, getManagementClient, jsonResponse, tryCreateNewVersion } from "./shared/management-client.ts";
 
 interface UpdateContentVariantsRequest {
   readonly environmentId: string;
@@ -86,6 +86,8 @@ export default async (request: Request, _context: Context) => {
       variantItemId,
       operation,
     );
+
+    await tryCreateNewVersion(client, baseItemId, languageId);
 
     await client
       .upsertLanguageVariant()

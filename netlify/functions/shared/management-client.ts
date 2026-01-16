@@ -24,3 +24,16 @@ export const errorResponse = (message: string, status = 500): Response =>
     status,
     headers: { "Content-Type": "application/json" },
   });
+
+export const tryCreateNewVersion = async (
+  client: ManagementClient,
+  itemId: string,
+  languageId: string,
+): Promise<void> => {
+  await client
+    .createNewVersionOfLanguageVariant()
+    .byItemId(itemId)
+    .byLanguageId(languageId)
+    .toPromise()
+    .catch(() => {});
+};

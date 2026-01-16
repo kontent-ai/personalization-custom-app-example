@@ -9,6 +9,7 @@ interface VariantListProps {
   readonly environmentId: string;
   readonly language: LanguageModels.LanguageModel;
   readonly onDeleteVariant?: (variantId: string) => void;
+  readonly currentItemId?: string;
 }
 
 const EmptyState = () => (
@@ -26,6 +27,7 @@ export const VariantList = ({
   environmentId,
   language,
   onDeleteVariant,
+  currentItemId,
 }: VariantListProps) => (
   <div className={styles.container}>
     <div className={styles.header}>
@@ -46,6 +48,7 @@ export const VariantList = ({
             environmentId={environmentId}
             language={language}
             onDelete={onDeleteVariant}
+            isCurrentItem={variant.id === currentItemId}
           />
         ))}
       </div>

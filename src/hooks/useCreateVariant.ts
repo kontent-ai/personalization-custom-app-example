@@ -10,6 +10,7 @@ interface UseCreateVariantParams {
   readonly currentItemData: CurrentItemData;
   readonly variantTermId: string;
   readonly baseItemId: string;
+  readonly currentItemId: string;
   readonly existingVariants: ReadonlyArray<VariantInfo>;
 }
 
@@ -24,6 +25,7 @@ export const useCreateVariant = ({
   currentItemData,
   variantTermId,
   baseItemId,
+  currentItemId,
   existingVariants,
 }: UseCreateVariantParams) => {
   const queryClient = useQueryClient();
@@ -66,7 +68,11 @@ export const useCreateVariant = ({
 
       const newVariantId = createResult.data.itemId;
 
-      const allItemsToUpdate = [baseItemId, ...existingVariants.map((v) => v.id)];
+      const allItemsToUpdate = [
+        baseItemId,
+        ...existingVariants.map((v) => v.id),
+        ...(currentItemId !== baseItemId ? [currentItemId] : []),
+      ];
 
       const updateResults = await Promise.all(
         allItemsToUpdate.map(async (itemId) =>
@@ -97,7 +103,7 @@ export const useCreateVariant = ({
       };
 
       queryClient.setQueryData<ReadonlyArray<VariantInfo>>(
-        queryKeys.existingVariants(environmentId, baseItemId, languageId),
+        queryKeys.existingVariants(environmentId, currentItemId, languageId),
         (oldVariants) => (oldVariants ? [...oldVariants, newVariant] : [newVariant]),
       );
     },
