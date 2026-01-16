@@ -2,7 +2,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ELEMENT_SUFFIXES, findElementIdByCodenameSuffix } from "../constants/codenames.ts";
 import { queryKeys } from "../constants/queryKeys.ts";
 import { createVariant, updateContentVariants } from "../services/api.ts";
-import type { CurrentItemData, VariantInfo } from "../types/variant.types.ts";
+import type { CurrentItemData, VariantInfo, VariantsData } from "../types/variant.types.ts";
+import { allVariants } from "../utils/variants.ts";
 
 interface UseCreateVariantParams {
   readonly environmentId: string;
@@ -11,7 +12,7 @@ interface UseCreateVariantParams {
   readonly variantTermId: string;
   readonly baseItemId: string;
   readonly currentItemId: string;
-  readonly existingVariants: ReadonlyArray<VariantInfo>;
+  readonly variantsData: VariantsData;
 }
 
 interface CreateVariantInput {
@@ -26,7 +27,7 @@ export const useCreateVariant = ({
   variantTermId,
   baseItemId,
   currentItemId,
-  existingVariants,
+  variantsData,
 }: UseCreateVariantParams) => {
   const queryClient = useQueryClient();
 
@@ -69,11 +70,7 @@ export const useCreateVariant = ({
 
       const newVariantId = createResult.data.itemId;
 
-      const allItemsToUpdate = [
-        baseItemId,
-        ...existingVariants.map((v) => v.id),
-        ...(currentItemId !== baseItemId ? [currentItemId] : []),
-      ];
+      const allItemsToUpdate = allVariants(variantsData).map((v) => v.id);
 
       const updateResults = await Promise.all(
         allItemsToUpdate.map(async (itemId) =>
@@ -103,9 +100,9 @@ export const useCreateVariant = ({
         isBaseContent: false,
       };
 
-      queryClient.setQueryData<ReadonlyArray<VariantInfo>>(
+      queryClient.setQueryData<readonly VariantInfo[]>(
         queryKeys.existingVariants(environmentId, currentItemId, languageId),
-        (oldVariants) => (oldVariants ? [...oldVariants, newVariant] : [newVariant]),
+        (oldOtherVariants) => (oldOtherVariants ? [...oldOtherVariants, newVariant] : [newVariant]),
       );
     },
   });

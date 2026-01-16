@@ -21,3 +21,8 @@ export interface VariantInfo {
   readonly audienceTermId: string | null;
   readonly isBaseContent: boolean;
 }
+
+export interface VariantsData {
+  readonly editedVariant: VariantInfo;
+  readonly otherVariants: readonly VariantInfo[];
+}

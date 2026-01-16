@@ -9,7 +9,7 @@ import {
 } from "../constants/codenames.ts";
 import { queryKeys } from "../constants/queryKeys.ts";
 import { fetchItem, fetchTaxonomy, fetchVariant } from "../services/api.ts";
-import type { CurrentItemData, VariantInfo } from "../types/variant.types.ts";
+import type { CurrentItemData, VariantInfo, VariantsData } from "../types/variant.types.ts";
 import { notNull } from "../utils/function.ts";
 
 const referenceArraySchema = z.array(z.object({ id: z.string() }));
@@ -81,7 +81,7 @@ const extractLinkedItemIds = (
   return parsed.data.map((item) => item.id);
 };
 
-const extractAudienceTermId = (
+export const extractAudienceTermId = (
   variantElements: ReadonlyArray<ElementModels.ContentItemElement>,
   elementCodenames: ReadonlyMap<string, string>,
 ): string | null => {
@@ -109,7 +109,7 @@ const extractAudienceTermId = (
   return parsed.data[0]?.id ?? null;
 };
 
-const fetchExistingVariantsData = async (
+const fetchOtherVariantsData = async (
   environmentId: string,
   languageId: string,
   currentItemId: string,
@@ -138,50 +138,50 @@ const fetchExistingVariantsData = async (
     throw new Error("Variant type taxonomy not found");
   }
 
-  const variantPromises = linkedItemIds.map(async (itemId) => {
-    const [itemResult, variantResult] = await Promise.all([
-      fetchItem(environmentId, itemId),
-      fetchVariant(environmentId, itemId, languageId),
-    ]);
+  const variantPromises = linkedItemIds
+    .filter((itemId) => itemId !== currentItemId)
+    .map(async (itemId) => {
+      const [itemResult, variantResult] = await Promise.all([
+        fetchItem(environmentId, itemId),
+        fetchVariant(environmentId, itemId, languageId),
+      ]);
 
-    if (itemResult.error || !itemResult.data) {
-      return null;
-    }
+      if (itemResult.error || !itemResult.data) {
+        return null;
+      }
 
-    if (variantResult.error || !variantResult.data) {
-      return null;
-    }
+      if (variantResult.error || !variantResult.data) {
+        return null;
+      }
 
-    const audienceTermId = extractAudienceTermId(
-      variantResult.data.elements,
-      currentItemData.elementCodenames,
-    );
+      const audienceTermId = extractAudienceTermId(
+        variantResult.data.elements,
+        currentItemData.elementCodenames,
+      );
 
-    const isVariant = checkIsVariant(
-      variantResult.data.elements,
-      currentItemData.elementCodenames,
-      variantTermId,
-    );
+      const isVariant = checkIsVariant(
+        variantResult.data.elements,
+        currentItemData.elementCodenames,
+        variantTermId,
+      );
 
-    return {
-      id: itemId,
-      name: itemResult.data.name,
-      audienceTermId,
-      isBaseContent: !isVariant,
-    } satisfies VariantInfo;
-  });
+      return {
+        id: itemId,
+        name: itemResult.data.name,
+        audienceTermId,
+        isBaseContent: !isVariant,
+      } satisfies VariantInfo;
+    });
 
   const results = await Promise.all(variantPromises);
   const validVariants = results.filter(notNull);
 
-  // Sort: base content first, then variants; exclude current item
-  return validVariants
-    .filter((v) => v.id !== currentItemId)
-    .sort((a, b) => {
-      if (a.isBaseContent && !b.isBaseContent) return -1;
-      if (!a.isBaseContent && b.isBaseContent) return 1;
-      return 0;
-    });
+  // Sort: base content first, then variants
+  return validVariants.sort((a, b) => {
+    if (a.isBaseContent && !b.isBaseContent) return -1;
+    if (!a.isBaseContent && b.isBaseContent) return 1;
+    return 0;
+  });
 };
 
 export const useExistingVariants = (
@@ -189,12 +189,27 @@ export const useExistingVariants = (
   languageId: string,
   currentItemId: string,
   currentItemData: CurrentItemData,
-) => {
-  const { data } = useSuspenseQuery({
+): { variantsData: VariantsData } => {
+  const { data: otherVariants } = useSuspenseQuery({
     queryKey: queryKeys.existingVariants(environmentId, currentItemId, languageId),
     queryFn: async () =>
-      fetchExistingVariantsData(environmentId, languageId, currentItemId, currentItemData),
+      fetchOtherVariantsData(environmentId, languageId, currentItemId, currentItemData),
   });
 
-  return { variants: data };
+  const editedVariant: VariantInfo = {
+    id: currentItemId,
+    name: currentItemData.item.name,
+    audienceTermId: extractAudienceTermId(
+      currentItemData.variant.elements,
+      currentItemData.elementCodenames,
+    ),
+    isBaseContent: !currentItemData.isVariant,
+  };
+
+  return {
+    variantsData: {
+      editedVariant,
+      otherVariants,
+    },
+  };
 };

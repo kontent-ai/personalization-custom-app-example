@@ -2,15 +2,15 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ELEMENT_SUFFIXES, findElementIdByCodenameSuffix } from "../constants/codenames.ts";
 import { queryKeys } from "../constants/queryKeys.ts";
 import { deleteItem, updateContentVariants } from "../services/api.ts";
-import type { CurrentItemData, VariantInfo } from "../types/variant.types.ts";
+import type { CurrentItemData, VariantInfo, VariantsData } from "../types/variant.types.ts";
+import { allVariants } from "../utils/variants.ts";
 
 interface UseDeleteVariantParams {
   readonly environmentId: string;
   readonly languageId: string;
   readonly currentItemData: CurrentItemData;
-  readonly baseItemId: string;
   readonly currentItemId: string;
-  readonly existingVariants: ReadonlyArray<VariantInfo>;
+  readonly variantsData: VariantsData;
 }
 
 interface DeleteVariantInput {
@@ -21,9 +21,8 @@ export const useDeleteVariant = ({
   environmentId,
   languageId,
   currentItemData,
-  baseItemId,
   currentItemId,
-  existingVariants,
+  variantsData,
 }: UseDeleteVariantParams) => {
   const queryClient = useQueryClient();
 
@@ -38,11 +37,9 @@ export const useDeleteVariant = ({
         throw new Error("Content variants element ID not found");
       }
 
-      const allItemsToUpdate = [
-        baseItemId,
-        ...existingVariants.filter((v) => v.id !== variantId).map((v) => v.id),
-        ...(currentItemId !== baseItemId && currentItemId !== variantId ? [currentItemId] : []),
-      ];
+      const allItemsToUpdate = allVariants(variantsData)
+        .filter((v) => v.id !== variantId)
+        .map((v) => v.id);
 
       const updateResults = await Promise.all(
         allItemsToUpdate.map(async (itemId) =>
@@ -71,9 +68,10 @@ export const useDeleteVariant = ({
       return { deletedVariantId: variantId };
     },
     onSuccess: (data) => {
-      queryClient.setQueryData<ReadonlyArray<VariantInfo>>(
+      queryClient.setQueryData<readonly VariantInfo[]>(
         queryKeys.existingVariants(environmentId, currentItemId, languageId),
-        (oldVariants) => oldVariants?.filter((v) => v.id !== data.deletedVariantId) ?? [],
+        (oldOtherVariants) =>
+          oldOtherVariants?.filter((v) => v.id !== data.deletedVariantId) ?? [],
       );
     },
   });

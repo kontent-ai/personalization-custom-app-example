@@ -8,6 +8,7 @@ import { useExistingVariants } from "../../hooks/useExistingVariants.ts";
 import { useLanguage } from "../../hooks/useLanguage.ts";
 import { useVariantTermId } from "../../hooks/useVariantTermId.ts";
 import type { VariantInfo } from "../../types/variant.types.ts";
+import { extractUsedAudienceIds, findBaseContent } from "../../utils/variants.ts";
 import { AudienceSelector } from "../AudienceSelector/AudienceSelector.tsx";
 import { ConfirmDeleteModal } from "../ConfirmDeleteModal/ConfirmDeleteModal.tsx";
 import { StatusBadge } from "../StatusBadge/StatusBadge.tsx";
@@ -74,7 +75,7 @@ const PersonalizationPanelContent = ({
 
   const { data } = useCurrentItem(environmentId, itemId, languageId);
   const { terms: audienceTerms, termMap: audienceTermMap } = useAudienceTaxonomy(environmentId);
-  const { variants } = useExistingVariants(environmentId, languageId, itemId, data);
+  const { variantsData } = useExistingVariants(environmentId, languageId, itemId, data);
   const { language } = useLanguage(environmentId, languageId);
   const { variantTermId } = useVariantTermId(environmentId);
 
@@ -84,9 +85,9 @@ const PersonalizationPanelContent = ({
     if (isBaseContent) {
       return itemId;
     }
-    const baseItem = variants.find((v) => v.isBaseContent);
+    const baseItem = findBaseContent(variantsData);
     return baseItem?.id ?? itemId;
-  }, [isBaseContent, itemId, variants]);
+  }, [isBaseContent, itemId, variantsData]);
 
   const {
     createVariant,
@@ -101,7 +102,7 @@ const PersonalizationPanelContent = ({
     variantTermId,
     baseItemId: actualBaseItemId,
     currentItemId: itemId,
-    existingVariants: variants,
+    variantsData,
   });
 
   const {
@@ -114,19 +115,13 @@ const PersonalizationPanelContent = ({
     environmentId,
     languageId,
     currentItemData: data,
-    baseItemId: actualBaseItemId,
     currentItemId: itemId,
-    existingVariants: variants,
+    variantsData,
   });
 
   const usedAudienceIds = useMemo(
-    () =>
-      new Set(
-        variants
-          .filter((v) => !v.isBaseContent && v.audienceTermId)
-          .map((v) => v.audienceTermId as string),
-      ),
-    [variants],
+    () => extractUsedAudienceIds(variantsData),
+    [variantsData],
   );
 
   const handleCreateVariant = (audienceId: string, audienceName: string) => {
@@ -136,7 +131,7 @@ const PersonalizationPanelContent = ({
   };
 
   const handleDeleteClick = (variantId: string) => {
-    const variant = variants.find((v) => v.id === variantId);
+    const variant = variantsData.otherVariants.find((v) => v.id === variantId);
     if (variant) {
       setVariantToDelete(variant);
     }
@@ -207,7 +202,7 @@ const PersonalizationPanelContent = ({
       </div>
 
       <VariantList
-        variants={variants}
+        variants={variantsData.otherVariants}
         audienceTermMap={audienceTermMap}
         environmentId={environmentId}
         language={language}
