@@ -119,10 +119,7 @@ const PersonalizationPanelContent = ({
     variantsData,
   });
 
-  const usedAudienceIds = useMemo(
-    () => extractUsedAudienceIds(variantsData),
-    [variantsData],
-  );
+  const usedAudienceIds = useMemo(() => extractUsedAudienceIds(variantsData), [variantsData]);
 
   const handleCreateVariant = (audienceId: string, audienceName: string) => {
     resetCreate();

@@ -18,7 +18,9 @@
   font-weight: 500;
   cursor: pointer;
   box-shadow: var(--shadow-lg);
-  transition: background-color 0.2s, transform 0.2s;
+  transition:
+    background-color 0.2s,
+    transform 0.2s;
 }
 
 .button:hover {

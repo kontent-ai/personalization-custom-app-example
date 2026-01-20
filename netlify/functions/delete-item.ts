@@ -1,6 +1,11 @@
 import type { Context } from "@netlify/functions";
 import { deleteItemRequestSchema } from "../../shared/schemas/delete-item.schema.ts";
-import { errorResponse, getManagementClient, jsonResponse, tryCreateNewVersion } from "./shared/management-client.ts";
+import {
+  errorResponse,
+  getManagementClient,
+  jsonResponse,
+  tryCreateNewVersion,
+} from "./shared/management-client.ts";
 
 const tryCancelScheduledPublishing = async (
   client: ReturnType<typeof getManagementClient>,
@@ -11,7 +16,8 @@ const tryCancelScheduledPublishing = async (
     .cancelSheduledPublishingOfLanguageVariant()
     .byItemId(itemId)
     .byLanguageId(languageId)
-    .toPromise().catch(() => {});
+    .toPromise()
+    .catch(() => {});
 };
 
 const tryCancelScheduledUnpublishing = async (
@@ -23,7 +29,8 @@ const tryCancelScheduledUnpublishing = async (
     .cancelSheduledUnpublishingOfLanguageVariant()
     .byItemId(itemId)
     .byLanguageId(languageId)
-    .toPromise().catch(() => {});
+    .toPromise()
+    .catch(() => {});
 };
 
 export default async (request: Request, _context: Context) => {

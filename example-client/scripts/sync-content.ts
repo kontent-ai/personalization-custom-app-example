@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { readFileSync, writeFileSync, unlinkSync } from "node:fs";
+import { readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { migrateContentRun } from "@kontent-ai/data-ops";
@@ -33,7 +33,9 @@ const main = async (): Promise<void> => {
   const contentData = JSON.parse(readFileSync(contentItemsPath, "utf-8")) as ContentData;
 
   console.log(`Target environment: ${environmentId}`);
-  console.log(`Items to import: ${contentData.items.map((item) => item.system.codename).join(", ")}\n`);
+  console.log(
+    `Items to import: ${contentData.items.map((item) => item.system.codename).join(", ")}\n`,
+  );
 
   const zip = new JSZip();
   zip.file("items.json", JSON.stringify(contentData.items));

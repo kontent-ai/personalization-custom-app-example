@@ -1,6 +1,9 @@
 import type { ElementContracts } from "@kontent-ai/management-sdk";
 import type { Context } from "@netlify/functions";
-import { createVariantRequestSchema, type CreateVariantResponse } from "../../shared/schemas/create-variant.schema.ts";
+import {
+  type CreateVariantResponse,
+  createVariantRequestSchema,
+} from "../../shared/schemas/create-variant.schema.ts";
 import { updateContentVariantsElement } from "./shared/element-utils.ts";
 import { errorResponse, getManagementClient, jsonResponse } from "./shared/management-client.ts";
 

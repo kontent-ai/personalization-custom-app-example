@@ -1,4 +1,12 @@
-import { createContext, useContext, useState, useCallback, useEffect, type FC, type ReactNode } from "react";
+import {
+  createContext,
+  type FC,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import type { AudienceCodename } from "../types/content.ts";
 
 const STORAGE_KEY = "personalization_audience";
@@ -14,13 +22,17 @@ const isValidAudience = (value: string | null): value is AudienceCodename =>
   value === null || VALID_AUDIENCES.has(value as AudienceCodename);
 
 const getStoredAudience = (): AudienceCodename => {
-  if (typeof window === "undefined") return null;
+  if (typeof window === "undefined") {
+    return null;
+  }
   const stored = localStorage.getItem(STORAGE_KEY);
   return isValidAudience(stored) ? stored : null;
 };
 
 const setStoredAudience = (audience: AudienceCodename): void => {
-  if (typeof window === "undefined") return;
+  if (typeof window === "undefined") {
+    return;
+  }
   audience === null
     ? localStorage.removeItem(STORAGE_KEY)
     : localStorage.setItem(STORAGE_KEY, audience);
@@ -56,14 +68,14 @@ export const AudienceProvider: FC<AudienceProviderProps> = ({ children }) => {
   );
 };
 
- /**                                                                                                                                                                                                             
-  * Hook to access the current audience context.                                                                                                                                                                 
-  *                                                                                                                                                                                                              
-  * In this example, the hook returns the audience manually selected by the user                                                                                                                                 
-  * via the AudienceSelector component. In real projects, this would typically                                                                                                                                   
-  * determine the user's audience programmatically based on factors like                                                                                                                                         
-  * authentication status, user profile data, behavior tracking, or cookies.                                                                                                                                     
-  */ 
+/**
+ * Hook to access the current audience context.
+ *
+ * In this example, the hook returns the audience manually selected by the user
+ * via the AudienceSelector component. In real projects, this would typically
+ * determine the user's audience programmatically based on factors like
+ * authentication status, user profile data, behavior tracking, or cookies.
+ */
 export const useAudience = (): AudienceContextValue => {
   const context = useContext(AudienceContext);
   if (context === undefined) {

@@ -178,8 +178,12 @@ const fetchOtherVariantsData = async (
 
   // Sort: base content first, then variants
   return validVariants.sort((a, b) => {
-    if (a.isBaseContent && !b.isBaseContent) return -1;
-    if (!a.isBaseContent && b.isBaseContent) return 1;
+    if (a.isBaseContent && !b.isBaseContent) {
+      return -1;
+    }
+    if (!a.isBaseContent && b.isBaseContent) {
+      return 1;
+    }
     return 0;
   });
 };

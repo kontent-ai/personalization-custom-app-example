@@ -1,8 +1,8 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AudienceProvider } from "./context/AudienceContext.tsx";
 import { App } from "./App.tsx";
+import { AudienceProvider } from "./context/AudienceContext.tsx";
 import "./index.css";
 
 const queryClient = new QueryClient({
@@ -26,5 +26,5 @@ createRoot(rootElement).render(
         <App />
       </AudienceProvider>
     </QueryClientProvider>
-  </StrictMode>
+  </StrictMode>,
 );

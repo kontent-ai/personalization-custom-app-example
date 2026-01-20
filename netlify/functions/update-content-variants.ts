@@ -1,7 +1,12 @@
 import type { Context } from "@netlify/functions";
 import { updateContentVariantsRequestSchema } from "../../shared/schemas/update-content-variants.schema.ts";
 import { updateContentVariantsElement } from "./shared/element-utils.ts";
-import { errorResponse, getManagementClient, jsonResponse, tryCreateNewVersion } from "./shared/management-client.ts";
+import {
+  errorResponse,
+  getManagementClient,
+  jsonResponse,
+  tryCreateNewVersion,
+} from "./shared/management-client.ts";
 
 export default async (request: Request, _context: Context) => {
   if (request.method === "OPTIONS") {

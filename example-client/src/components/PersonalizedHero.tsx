@@ -1,6 +1,6 @@
 import type { FC } from "react";
 import { useAudience } from "../context/AudienceContext.tsx";
-import { resolveVariant, getVariantAudienceName } from "../lib/variantResolver.ts";
+import { getVariantAudienceName, resolveVariant } from "../lib/variantResolver.ts";
 import type { HeroSection } from "../types/content.ts";
 import styles from "./PersonalizedHero.module.css";
 

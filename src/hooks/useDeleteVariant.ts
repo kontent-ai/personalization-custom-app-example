@@ -70,8 +70,7 @@ export const useDeleteVariant = ({
     onSuccess: (data) => {
       queryClient.setQueryData<readonly VariantInfo[]>(
         queryKeys.existingVariants(environmentId, currentItemId, languageId),
-        (oldOtherVariants) =>
-          oldOtherVariants?.filter((v) => v.id !== data.deletedVariantId) ?? [],
+        (oldOtherVariants) => oldOtherVariants?.filter((v) => v.id !== data.deletedVariantId) ?? [],
       );
     },
   });

@@ -52,12 +52,7 @@ export const VariantCard = ({
           title={cannotDeleteMessage ?? undefined}
           aria-label={cannotDeleteMessage ?? `Delete ${variant.name}`}
         >
-          <svg
-            className={styles.deleteIcon}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
+          <svg className={styles.deleteIcon} fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"

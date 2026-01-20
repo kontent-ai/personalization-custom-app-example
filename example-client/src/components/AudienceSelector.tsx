@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, type FC } from "react";
+import { type FC, useEffect, useRef, useState } from "react";
 import { useAudience } from "../context/AudienceContext.tsx";
 import { AUDIENCES } from "../types/content.ts";
 import styles from "./AudienceSelector.module.css";
@@ -34,10 +34,7 @@ export const AudienceSelector: FC = () => {
           <h3 className={styles.popupTitle}>Preview as Audience</h3>
           <div className={styles.optionsList}>
             {AUDIENCES.map((audience) => (
-              <label
-                key={audience.codename ?? "none"}
-                className={styles.option}
-              >
+              <label key={audience.codename ?? "none"} className={styles.option}>
                 <input
                   type="radio"
                   name="audience"

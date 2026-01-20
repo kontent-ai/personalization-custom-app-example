@@ -1,8 +1,8 @@
 import type { FC } from "react";
-import { useLandingPage } from "./hooks/usePersonalizedContent.ts";
-import { PersonalizedHero } from "./components/PersonalizedHero.tsx";
-import { AudienceSelector } from "./components/AudienceSelector.tsx";
 import styles from "./App.module.css";
+import { AudienceSelector } from "./components/AudienceSelector.tsx";
+import { PersonalizedHero } from "./components/PersonalizedHero.tsx";
+import { useLandingPage } from "./hooks/usePersonalizedContent.ts";
 
 export const App: FC = () => {
   const { data: landingPage, isPending, isError, error } = useLandingPage("homepage");
@@ -12,8 +12,8 @@ export const App: FC = () => {
       <header className={styles.header}>
         <h1 className={styles.title}>Personalization Example</h1>
         <p className={styles.description}>
-          This example demonstrates content personalization based on audience segments.
-          Use the audience selector in the bottom-right corner to preview different variants.
+          This example demonstrates content personalization based on audience segments. Use the
+          audience selector in the bottom-right corner to preview different variants.
         </p>
       </header>
 

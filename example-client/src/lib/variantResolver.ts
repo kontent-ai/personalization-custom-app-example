@@ -9,7 +9,7 @@ import type { AudienceCodename, HeroSection } from "../types/content.ts";
  */
 export const resolveVariant = (
   baseItem: HeroSection,
-  currentAudience: AudienceCodename
+  currentAudience: AudienceCodename,
 ): HeroSection => {
   // If no audience selected, return base item
   if (currentAudience === null) {
@@ -22,8 +22,8 @@ export const resolveVariant = (
   // Find variant matching current audience
   const matchingVariant = variants.find((variant) =>
     variant.elements.personalization__personalization_audience.value.some(
-      (term) => term.codename === currentAudience
-    )
+      (term) => term.codename === currentAudience,
+    ),
   );
 
   // Return matching variant or base item as fallback

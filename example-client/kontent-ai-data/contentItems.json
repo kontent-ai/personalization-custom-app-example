@@ -14,10 +14,16 @@
           "workflow_step": { "codename": "published" },
           "elements": {
             "headline": { "type": "text", "value": "Welcome to Our Platform" },
-            "subheadline": { "type": "text", "value": "Discover amazing features and capabilities" },
+            "subheadline": {
+              "type": "text",
+              "value": "Discover amazing features and capabilities"
+            },
             "cta_text": { "type": "text", "value": "Get Started" },
             "cta_url": { "type": "text", "value": "/signup" },
-            "personalization__variant_type": { "type": "taxonomy", "value": [{ "codename": "base_content" }] },
+            "personalization__variant_type": {
+              "type": "taxonomy",
+              "value": [{ "codename": "base_content" }]
+            },
             "personalization__personalization_audience": { "type": "taxonomy", "value": [] },
             "personalization__content_variants": {
               "type": "modular_content",
@@ -46,11 +52,20 @@
           "workflow_step": { "codename": "published" },
           "elements": {
             "headline": { "type": "text", "value": "New Here? Start Your Free Trial!" },
-            "subheadline": { "type": "text", "value": "Join thousands of users who trust our platform" },
+            "subheadline": {
+              "type": "text",
+              "value": "Join thousands of users who trust our platform"
+            },
             "cta_text": { "type": "text", "value": "Start Free Trial" },
             "cta_url": { "type": "text", "value": "/trial" },
-            "personalization__variant_type": { "type": "taxonomy", "value": [{ "codename": "variant" }] },
-            "personalization__personalization_audience": { "type": "taxonomy", "value": [{ "codename": "new_visitors" }] },
+            "personalization__variant_type": {
+              "type": "taxonomy",
+              "value": [{ "codename": "variant" }]
+            },
+            "personalization__personalization_audience": {
+              "type": "taxonomy",
+              "value": [{ "codename": "new_visitors" }]
+            },
             "personalization__content_variants": {
               "type": "modular_content",
               "value": [
@@ -81,8 +96,14 @@
             "subheadline": { "type": "text", "value": "Pick up where you left off" },
             "cta_text": { "type": "text", "value": "Continue" },
             "cta_url": { "type": "text", "value": "/dashboard" },
-            "personalization__variant_type": { "type": "taxonomy", "value": [{ "codename": "variant" }] },
-            "personalization__personalization_audience": { "type": "taxonomy", "value": [{ "codename": "returning_visitors" }] },
+            "personalization__variant_type": {
+              "type": "taxonomy",
+              "value": [{ "codename": "variant" }]
+            },
+            "personalization__personalization_audience": {
+              "type": "taxonomy",
+              "value": [{ "codename": "returning_visitors" }]
+            },
             "personalization__content_variants": {
               "type": "modular_content",
               "value": [
@@ -110,11 +131,20 @@
           "workflow_step": { "codename": "published" },
           "elements": {
             "headline": { "type": "text", "value": "Exclusive Premium Features" },
-            "subheadline": { "type": "text", "value": "Thank you for being a valued premium member" },
+            "subheadline": {
+              "type": "text",
+              "value": "Thank you for being a valued premium member"
+            },
             "cta_text": { "type": "text", "value": "Explore Premium" },
             "cta_url": { "type": "text", "value": "/premium-features" },
-            "personalization__variant_type": { "type": "taxonomy", "value": [{ "codename": "variant" }] },
-            "personalization__personalization_audience": { "type": "taxonomy", "value": [{ "codename": "premium_members" }] },
+            "personalization__variant_type": {
+              "type": "taxonomy",
+              "value": [{ "codename": "variant" }]
+            },
+            "personalization__personalization_audience": {
+              "type": "taxonomy",
+              "value": [{ "codename": "premium_members" }]
+            },
             "personalization__content_variants": {
               "type": "modular_content",
               "value": [
@@ -142,11 +172,20 @@
           "workflow_step": { "codename": "published" },
           "elements": {
             "headline": { "type": "text", "value": "Enterprise Solutions" },
-            "subheadline": { "type": "text", "value": "Scale your business with our enterprise-grade platform" },
+            "subheadline": {
+              "type": "text",
+              "value": "Scale your business with our enterprise-grade platform"
+            },
             "cta_text": { "type": "text", "value": "Contact Sales" },
             "cta_url": { "type": "text", "value": "/enterprise" },
-            "personalization__variant_type": { "type": "taxonomy", "value": [{ "codename": "variant" }] },
-            "personalization__personalization_audience": { "type": "taxonomy", "value": [{ "codename": "enterprise_customers" }] },
+            "personalization__variant_type": {
+              "type": "taxonomy",
+              "value": [{ "codename": "variant" }]
+            },
+            "personalization__personalization_audience": {
+              "type": "taxonomy",
+              "value": [{ "codename": "enterprise_customers" }]
+            },
             "personalization__content_variants": {
               "type": "modular_content",
               "value": [
