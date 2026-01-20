@@ -1,0 +1,31 @@
+{
+  "name": "@kontent-ai/personalization-example",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "sync:model": "tsx scripts/sync-model.ts",
+    "sync:content": "tsx scripts/sync-content.ts",
+    "sync:all": "pnpm sync:model && pnpm sync:content"
+  },
+  "dependencies": {
+    "@kontent-ai/delivery-sdk": "^16.4.0",
+    "@tanstack/react-query": "^5.90.12",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1"
+  },
+  "devDependencies": {
+    "@kontent-ai/data-ops": "2.4.1",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "5.1.2",
+    "dotenv": "17.2.3",
+    "jszip": "3.10.1",
+    "tsx": "4.21.0",
+    "typescript": "^5.9.3",
+    "vite": "7.3.1"
+  }
+}

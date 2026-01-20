@@ -1,0 +1,98 @@
+[
+  {
+    "name": "Hero Section",
+    "codename": "hero_section",
+    "content_groups": [
+      {
+        "name": "Content",
+        "codename": "content_group"
+      },
+      {
+        "name": "Personalization",
+        "codename": "personalization_group"
+      }
+    ],
+    "elements": [
+      {
+        "name": "Headline",
+        "codename": "headline",
+        "type": "text",
+        "is_required": true,
+        "is_non_localizable": false,
+        "content_group": {
+          "codename": "content_group"
+        }
+      },
+      {
+        "name": "Subheadline",
+        "codename": "subheadline",
+        "type": "text",
+        "is_required": false,
+        "is_non_localizable": false,
+        "content_group": {
+          "codename": "content_group"
+        }
+      },
+      {
+        "name": "CTA Text",
+        "codename": "cta_text",
+        "type": "text",
+        "is_required": false,
+        "is_non_localizable": false,
+        "content_group": {
+          "codename": "content_group"
+        }
+      },
+      {
+        "name": "CTA URL",
+        "codename": "cta_url",
+        "type": "text",
+        "is_required": false,
+        "is_non_localizable": false,
+        "content_group": {
+          "codename": "content_group"
+        }
+      },
+      {
+        "codename": "personalization",
+        "type": "snippet",
+        "snippet": {
+          "codename": "personalization"
+        },
+        "content_group": {
+          "codename": "personalization_group"
+        }
+      }
+    ]
+  },
+  {
+    "name": "Landing Page",
+    "codename": "landing_page",
+    "content_groups": [],
+    "elements": [
+      {
+        "name": "Title",
+        "codename": "title",
+        "type": "text",
+        "is_required": true,
+        "is_non_localizable": false
+      },
+      {
+        "name": "Hero",
+        "codename": "hero",
+        "type": "modular_content",
+        "is_required": false,
+        "is_non_localizable": false,
+        "allowed_content_types": [
+          {
+            "codename": "hero_section"
+          }
+        ],
+        "item_count_limit": {
+          "value": 1,
+          "condition": "exactly"
+        }
+      }
+    ]
+  }
+]

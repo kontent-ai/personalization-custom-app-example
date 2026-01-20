@@ -170,29 +170,6 @@ Only available when viewing base content:
 | `pnpm lint` | Run ESLint |
 | `pnpm sync` | Sync content model to Kontent.ai using data-ops |
 
-### Project Structure
-
-```
-├── netlify/functions/      # Netlify serverless functions
-│   ├── create-variant.ts   # Create new variant item
-│   ├── delete-item.ts      # Delete content item
-│   ├── fetch-*.ts          # Various fetch functions
-│   ├── update-content-variants.ts
-│   └── shared/             # Shared utilities
-├── scripts/                # Setup scripts
-│   ├── content-model/      # Content model definitions (data-ops format)
-│   │   ├── taxonomyGroups.json.example  # Example taxonomy (copy and customize)
-│   │   └── contentTypeSnippets.json     # Snippet definition
-│   └── sync-content-model.ts            # Sync script using data-ops
-├── src/
-│   ├── components/         # React components
-│   ├── hooks/              # Custom React hooks
-│   ├── services/           # API client
-│   ├── constants/          # Constants and codenames
-│   ├── types/              # TypeScript types
-│   └── contexts/           # React contexts
-```
-
 ## Deployment
 
 ### Deploy to Netlify
@@ -212,6 +189,14 @@ To add, remove, or modify your personalization audiences:
 2. Run `pnpm sync` to update the taxonomy in Kontent.ai
 
 Note: Removing audience terms that are in use by existing variants may cause issues. Update your content items first.
+
+## Example Client
+
+See the [example-client](./example-client/README.md) directory for a React application demonstrating how to consume personalized content on the frontend. The example shows:
+
+- How to fetch base content with linked variants
+- Resolving the correct variant based on user audience
+- Fallback behavior when no matching variant exists
 
 ## License
 
