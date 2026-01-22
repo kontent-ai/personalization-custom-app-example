@@ -1,21 +1,9 @@
-import type { TaxonomyModels } from "@kontent-ai/management-sdk";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { TAXONOMY_CODENAMES } from "../constants/codenames.ts";
 import { queryKeys } from "../constants/queryKeys.ts";
 import { fetchTaxonomy } from "../services/api.ts";
-
-interface AudienceTerm {
-  readonly id: string;
-  readonly name: string;
-  readonly codename: string;
-}
-
-const flattenTerms = (terms: ReadonlyArray<TaxonomyModels.Taxonomy>): ReadonlyArray<AudienceTerm> =>
-  terms.flatMap((term) => [
-    { id: term.id, name: term.name, codename: term.codename },
-    ...flattenTerms(term.terms),
-  ]);
+import { flattenTaxonomyTerms } from "../utils/taxonomy-utils.ts";
 
 export const useAudienceTaxonomy = (environmentId: string) => {
   const { data } = useSuspenseQuery({
@@ -33,7 +21,7 @@ export const useAudienceTaxonomy = (environmentId: string) => {
   });
 
   const { terms, termMap } = useMemo(() => {
-    const flatTerms = flattenTerms(data.terms);
+    const flatTerms = flattenTaxonomyTerms(data.terms);
     const map = new Map(flatTerms.map((t) => [t.id, t.name]));
     return { terms: flatTerms, termMap: map };
   }, [data]);

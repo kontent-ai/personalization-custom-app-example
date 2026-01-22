@@ -2,7 +2,6 @@ import type {
   ContentTypeElements,
   ElementModels,
   LanguageVariantModels,
-  TaxonomyModels,
 } from "@kontent-ai/management-sdk";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { z } from "zod";
@@ -10,11 +9,11 @@ import {
   ELEMENT_SUFFIXES,
   findElementIdByCodenameSuffix,
   TAXONOMY_CODENAMES,
-  VARIANT_TYPE_TERMS,
 } from "../constants/codenames.ts";
 import { queryKeys } from "../constants/queryKeys.ts";
 import { fetchContentType, fetchItem, fetchTaxonomy, fetchVariant } from "../services/api.ts";
 import type { CurrentItemData } from "../types/variant.types.ts";
+import { findVariantTermId } from "../utils/taxonomy-utils.ts";
 
 const buildElementCodenamesMap = (
   contentTypeElements: ReadonlyArray<ContentTypeElements.Element>,
@@ -32,16 +31,9 @@ const buildElementCodenamesMap = (
   return new Map([...typeEntries, ...snippetEntries]);
 };
 
-const findVariantTermId = (terms: ReadonlyArray<TaxonomyModels.Taxonomy>): string | undefined =>
-  terms
-    .map((term) =>
-      term.codename === VARIANT_TYPE_TERMS.VARIANT ? term.id : findVariantTermId(term.terms),
-    )
-    .find((id) => id !== undefined);
-
 const referenceArraySchema = z.array(z.object({ id: z.string() }));
 
-const checkIfVariant = (
+const checkIsVariant = (
   variantElements: ReadonlyArray<ElementModels.ContentItemElement>,
   elementCodenames: ReadonlyMap<string, string>,
   variantTermId: string | undefined,
@@ -153,7 +145,7 @@ const determineIsVariant = async (
 
   if (taxonomyResult.data) {
     const variantTermId = findVariantTermId(taxonomyResult.data.terms);
-    return checkIfVariant(variant.elements, elementCodenames, variantTermId);
+    return checkIsVariant(variant.elements, elementCodenames, variantTermId);
   }
   return false;
 };

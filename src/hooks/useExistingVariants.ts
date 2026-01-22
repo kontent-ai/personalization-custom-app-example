@@ -1,27 +1,18 @@
-import type { ElementModels, TaxonomyModels } from "@kontent-ai/management-sdk";
+import type { ElementModels } from "@kontent-ai/management-sdk";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import {
   ELEMENT_SUFFIXES,
   findElementIdByCodenameSuffix,
   TAXONOMY_CODENAMES,
-  VARIANT_TYPE_TERMS,
 } from "../constants/codenames.ts";
 import { queryKeys } from "../constants/queryKeys.ts";
 import { fetchItem, fetchTaxonomy, fetchVariant } from "../services/api.ts";
 import type { CurrentItemData, VariantInfo, VariantsData } from "../types/variant.types.ts";
 import { notNull } from "../utils/function.ts";
+import { findVariantTermId } from "../utils/taxonomy-utils.ts";
 
 const referenceArraySchema = z.array(z.object({ id: z.string() }));
-
-const findVariantTermId = (
-  taxonomyTerms: ReadonlyArray<TaxonomyModels.Taxonomy>,
-): string | undefined =>
-  taxonomyTerms
-    .map((term) =>
-      term.codename === VARIANT_TYPE_TERMS.VARIANT ? term.id : findVariantTermId(term.terms),
-    )
-    .find((id) => id !== undefined);
 
 const checkIsVariant = (
   variantElements: ReadonlyArray<ElementModels.ContentItemElement>,
