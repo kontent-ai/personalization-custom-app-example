@@ -26,17 +26,10 @@ pnpm install
 
 ### 2. Configure Environment Variables
 
-Copy the example environment file and add your credentials:
+Copy the example environment file and add your credentials (see `.env.example` for details):
 
 ```bash
 cp .env.example .env
-```
-
-Edit `.env` and add your Kontent.ai credentials:
-
-```env
-KONTENT_MANAGEMENT_API_KEY=your-management-api-key-here
-KONTENT_ENVIRONMENT_ID=your-environment-id-here
 ```
 
 ### 3. Configure Your Audiences
@@ -79,7 +72,7 @@ This uses [@kontent-ai/data-ops](https://github.com/kontent-ai/data-ops) to sync
 1. Go to your Kontent.ai environment
 2. Navigate to **Content model** > **Content types**
 3. Edit the content type you want to enable personalization for
-4. Click **Add element** > **Snippet** > Select **Personalization**
+4. Add a **Snippet** element > Select **Personalization** snippet
 5. Save the content type
 
 ### 6. Configure Custom App in Kontent.ai
@@ -158,17 +151,6 @@ Only available when viewing base content:
 1. Click the trash icon on a variant card
 2. Confirm the deletion in the modal
 3. The variant is unlinked from all items and deleted
-
-## Development
-
-### Available Scripts
-
-| Command | Description |
-|---------|-------------|
-| `pnpm dev` | Start development server with Netlify |
-| `pnpm build` | Build for production |
-| `pnpm lint` | Run ESLint |
-| `pnpm sync` | Sync content model to Kontent.ai using data-ops |
 
 ## Deployment
 
