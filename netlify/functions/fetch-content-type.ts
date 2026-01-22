@@ -23,22 +23,20 @@ export default async (request: Request, _context: Context) => {
     const response = await client.viewContentType().byTypeId(typeId).toPromise();
 
     const snippetIds = response.data.elements
-      .filter((element) => element.type === "snippet")
-      .map((element) => {
-        const snippetElement = element as { snippet?: { id?: string } };
-        return snippetElement.snippet?.id;
-      })
-      .filter((id): id is string => id !== undefined);
+      .filter((element): element is { type: "snippet"; snippet: { id: string } } =>
+        element.type === "snippet" && "snippet" in element && element.snippet?.id !== undefined,
+      )
+      .map((element) => element.snippet.id);
 
     const snippets = await Promise.all(
-      snippetIds.map(
-        async (snippetId) => await client.viewContentTypeSnippet().byTypeId(snippetId).toPromise(),
+      snippetIds.map(async (snippetId) =>
+        client.viewContentTypeSnippet().byTypeId(snippetId).toPromise().then((res) => res.data),
       ),
     );
 
     return jsonResponse({
       contentType: response.data,
-      snippets: snippets.map((s) => s.data),
+      snippets,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";

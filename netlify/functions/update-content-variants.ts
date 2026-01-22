@@ -13,21 +13,23 @@ export default async (request: Request, _context: Context) => {
     return errorResponse("Method not allowed", 405);
   }
 
-  try {
-    const parseResult = updateContentVariantsRequestSchema.safeParse(await request.json());
-    if (!parseResult.success) {
-      return errorResponse(parseResult.error.message, 400);
-    }
-    const {
-      environmentId,
-      baseItemId,
-      languageId,
-      contentVariantsElementId,
-      variantItemId,
-      operation,
-    } = parseResult.data;
+  const parseResult = updateContentVariantsRequestSchema.safeParse(await request.json());
+  if (!parseResult.success) {
+    return errorResponse(parseResult.error.message, 400);
+  }
 
-    const client = createManagementClient(environmentId);
+  const {
+    environmentId,
+    baseItemId,
+    languageId,
+    contentVariantsElementId,
+    variantItemId,
+    operation,
+  } = parseResult.data;
+
+  const client = createManagementClient(environmentId);
+
+  try {
 
     const currentVariant = await client
       .viewLanguageVariant()

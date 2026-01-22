@@ -54,6 +54,7 @@ export default async (request: Request, _context: Context) => {
       tryCancelScheduledUnpublishing(client, itemId, languageId),
     ]);
 
+    // Ensure item is in draft state before deletion
     await tryCreateNewVersion(client, itemId, languageId);
 
     await client.deleteContentItem().byItemId(itemId).toPromise();
