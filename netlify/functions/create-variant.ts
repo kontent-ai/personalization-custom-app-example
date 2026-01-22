@@ -5,7 +5,8 @@ import {
   createVariantRequestSchema,
 } from "../../shared/schemas/create-variant.schema.ts";
 import { updateContentVariantsElement } from "./shared/element-utils.ts";
-import { errorResponse, getManagementClient, jsonResponse } from "./shared/management-client.ts";
+import { createManagementClient } from "./shared/management-client.ts";
+import { errorResponse, jsonResponse } from "./shared/response-utils.ts";
 
 const buildVariantElements = (
   sourceElements: ReadonlyArray<ElementContracts.IContentItemElementContract>,
@@ -56,7 +57,7 @@ export default async (request: Request, _context: Context) => {
       contentVariantsElementId,
     } = parseResult.data;
 
-    const client = getManagementClient(environmentId);
+    const client = createManagementClient(environmentId);
 
     const sourceItem = await client.viewContentItem().byItemId(sourceItemId).toPromise();
 

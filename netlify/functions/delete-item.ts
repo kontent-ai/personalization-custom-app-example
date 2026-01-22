@@ -1,14 +1,11 @@
+import type { ManagementClient } from "@kontent-ai/management-sdk";
 import type { Context } from "@netlify/functions";
 import { deleteItemRequestSchema } from "../../shared/schemas/delete-item.schema.ts";
-import {
-  errorResponse,
-  getManagementClient,
-  jsonResponse,
-  tryCreateNewVersion,
-} from "./shared/management-client.ts";
+import { createManagementClient, tryCreateNewVersion } from "./shared/management-client.ts";
+import { errorResponse, jsonResponse } from "./shared/response-utils.ts";
 
 const tryCancelScheduledPublishing = async (
-  client: ReturnType<typeof getManagementClient>,
+  client: ManagementClient,
   itemId: string,
   languageId: string,
 ): Promise<void> => {
@@ -21,7 +18,7 @@ const tryCancelScheduledPublishing = async (
 };
 
 const tryCancelScheduledUnpublishing = async (
-  client: ReturnType<typeof getManagementClient>,
+  client: ManagementClient,
   itemId: string,
   languageId: string,
 ): Promise<void> => {
@@ -49,7 +46,7 @@ export default async (request: Request, _context: Context) => {
     }
     const { environmentId, itemId, languageId } = parseResult.data;
 
-    const client = getManagementClient(environmentId);
+    const client = createManagementClient(environmentId);
 
     // These operations may fail silently if not applicable
     await Promise.all([

@@ -1,6 +1,7 @@
 import type { Context } from "@netlify/functions";
 import { fetchContentTypeRequestSchema } from "../../shared/schemas/fetch-content-type.schema.ts";
-import { errorResponse, getManagementClient, jsonResponse } from "./shared/management-client.ts";
+import { createManagementClient } from "./shared/management-client.ts";
+import { errorResponse, jsonResponse } from "./shared/response-utils.ts";
 
 export default async (request: Request, _context: Context) => {
   if (request.method === "OPTIONS") {
@@ -18,7 +19,7 @@ export default async (request: Request, _context: Context) => {
     }
     const { environmentId, typeId } = parseResult.data;
 
-    const client = getManagementClient(environmentId);
+    const client = createManagementClient(environmentId);
     const response = await client.viewContentType().byTypeId(typeId).toPromise();
 
     const snippetIds = response.data.elements

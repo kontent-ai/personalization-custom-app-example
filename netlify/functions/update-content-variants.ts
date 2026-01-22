@@ -1,12 +1,8 @@
 import type { Context } from "@netlify/functions";
 import { updateContentVariantsRequestSchema } from "../../shared/schemas/update-content-variants.schema.ts";
 import { updateContentVariantsElement } from "./shared/element-utils.ts";
-import {
-  errorResponse,
-  getManagementClient,
-  jsonResponse,
-  tryCreateNewVersion,
-} from "./shared/management-client.ts";
+import { createManagementClient, tryCreateNewVersion } from "./shared/management-client.ts";
+import { errorResponse, jsonResponse } from "./shared/response-utils.ts";
 
 export default async (request: Request, _context: Context) => {
   if (request.method === "OPTIONS") {
@@ -31,7 +27,7 @@ export default async (request: Request, _context: Context) => {
       operation,
     } = parseResult.data;
 
-    const client = getManagementClient(environmentId);
+    const client = createManagementClient(environmentId);
 
     const currentVariant = await client
       .viewLanguageVariant()
