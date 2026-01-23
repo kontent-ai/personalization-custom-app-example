@@ -2,6 +2,16 @@
 
 A custom app for managing content personalization variants in Kontent.ai. This app allows content editors to create, view, and delete personalized content variants for different audiences directly within the item editor.
 
+## Deploy to Netlify
+
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/kontent-ai/personalization-custom-app-example)
+
+1. Click the deploy button or connect your repository to Netlify
+2. Add the `KONTENT_MANAGEMENT_API_KEY` environment variable in Netlify settings
+3. Deploy the site
+4. Update the custom app URL in Kontent.ai to your Netlify URL
+
+
 ## Features
 
 - **View Variants**: See all content variants (including base content) for the current item
@@ -151,17 +161,6 @@ Only available when viewing base content:
 1. Click the trash icon on a variant card
 2. Confirm the deletion in the modal
 3. The variant is unlinked from all items and deleted
-
-## Deployment
-
-### Deploy to Netlify
-
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/kontent-ai/personalization-custom-app-example)
-
-1. Click the deploy button or connect your repository to Netlify
-2. Add the `KONTENT_MANAGEMENT_API_KEY` environment variable in Netlify settings
-3. Deploy the site
-4. Update the custom app URL in Kontent.ai to your Netlify URL
 
 ## Updating Audiences
 
