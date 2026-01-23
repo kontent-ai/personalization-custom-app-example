@@ -156,7 +156,7 @@ Only available when viewing base content:
 
 ### Deploy to Netlify
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/YOUR-REPO-HERE)
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/kontent-ai/personalization-custom-app-example)
 
 1. Click the deploy button or connect your repository to Netlify
 2. Add the `KONTENT_MANAGEMENT_API_KEY` environment variable in Netlify settings
