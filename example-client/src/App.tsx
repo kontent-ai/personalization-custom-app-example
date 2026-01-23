@@ -18,14 +18,14 @@ export const App: FC = () => {
       </header>
 
       <main className={styles.main}>
-        {!!isPending && (
+        {isPending && (
           <div className={styles.loading}>
             <div className={styles.spinner} />
             <p>Loading content from Kontent.ai...</p>
           </div>
         )}
 
-        {!!isError && (
+        {isError && (
           <div className={styles.error}>
             <h2>Error loading content</h2>
             <p>{error?.message ?? "An unknown error occurred"}</p>
@@ -39,7 +39,7 @@ export const App: FC = () => {
           </div>
         )}
 
-        {!!landingPage && (
+        {landingPage && (
           <>
             <div className={styles.pageInfo}>
               <span className={styles.pageLabel}>Landing Page:</span>

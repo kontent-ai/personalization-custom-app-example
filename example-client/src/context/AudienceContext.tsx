@@ -8,12 +8,9 @@ import {
   useMemo,
   useState,
 } from "react";
-import { type AudienceCodename, VALID_AUDIENCES } from "../types/content.ts";
+import { type AudienceCodename, isValidAudience } from "../types/content.ts";
 
 const STORAGE_KEY = "personalization_audience";
-
-const isValidAudience = (value: string | null): value is AudienceCodename =>
-  value === null || VALID_AUDIENCES.has(value as AudienceCodename);
 
 const getStoredAudience = (): AudienceCodename => {
   if (typeof window === "undefined") {

@@ -1,0 +1,12 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["@kontent-ai/biome-config/base", "@kontent-ai/biome-config/react"],
+  "linter": {
+    "rules": {
+      "nursery": {
+        // TODO: Remove once https://github.com/biomejs/biome/issues/8664 is fixed
+        "noLeakedRender": "off"
+      }
+    }
+  }
+}

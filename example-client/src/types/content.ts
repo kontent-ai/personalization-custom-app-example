@@ -20,7 +20,10 @@ export const AUDIENCES: ReadonlyArray<AudienceOption> = [
   { codename: "enterprise_customers", name: "Enterprise Customers" },
 ] as const;
 
-export const VALID_AUDIENCES = new Set<AudienceCodename>(AUDIENCES.map((a) => a.codename));
+const VALID_AUDIENCES = new Set<AudienceCodename>(AUDIENCES.map((a) => a.codename));
+
+export const isValidAudience = (value: string | null): value is AudienceCodename =>
+  value === null || VALID_AUDIENCES.has(value as AudienceCodename);
 
 export interface HeroSectionElements extends IContentItemElements {
   readonly headline: Elements.TextElement;
