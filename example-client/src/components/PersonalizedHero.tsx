@@ -1,11 +1,11 @@
 import type { FC } from "react";
 import { useAudience } from "../context/AudienceContext.tsx";
 import { getVariantAudienceName, resolveVariant } from "../lib/variantResolver.ts";
-import type { HeroSection } from "../types/content.ts";
+import type { HeroSectionType } from "../types/generated/types/hero-section-type.generated.ts";
 import styles from "./PersonalizedHero.module.css";
 
 interface PersonalizedHeroProps {
-  readonly baseItem: HeroSection;
+  readonly baseItem: HeroSectionType;
 }
 
 export const PersonalizedHero: FC<PersonalizedHeroProps> = ({ baseItem }) => {

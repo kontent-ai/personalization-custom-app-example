@@ -1,6 +1,12 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "extends": ["@kontent-ai/biome-config/base", "@kontent-ai/biome-config/react"],
+  "files": {
+    "includes": [
+      "src/**/*.{ts,tsx}",
+      "!example-client/src/types/generated/**/*.ts" // Ignore generated types until the model generator is updated to use biome
+    ]
+  },
   "linter": {
     "rules": {
       "nursery": {

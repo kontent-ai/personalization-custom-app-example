@@ -1,11 +1,10 @@
-import type { Elements, IContentItem, IContentItemElements } from "@kontent-ai/delivery-sdk";
+import {
+  isPersonalizationAudiencesTaxonomyTermCodename,
+  type PersonalizationAudiencesTaxonomyTermCodenames,
+} from "./generated/taxonomies/personalization-audiences-taxonomy.generated.ts";
 
-export type AudienceCodename =
-  | "new_visitors"
-  | "returning_visitors"
-  | "premium_members"
-  | "enterprise_customers"
-  | null;
+// Audience type that includes null for "no audience selected"
+export type AudienceCodename = PersonalizationAudiencesTaxonomyTermCodenames | null;
 
 export interface AudienceOption {
   readonly codename: AudienceCodename;
@@ -20,26 +19,5 @@ export const AUDIENCES: ReadonlyArray<AudienceOption> = [
   { codename: "enterprise_customers", name: "Enterprise Customers" },
 ] as const;
 
-const VALID_AUDIENCES = new Set<AudienceCodename>(AUDIENCES.map((a) => a.codename));
-
 export const isValidAudience = (value: string | null): value is AudienceCodename =>
-  value === null || VALID_AUDIENCES.has(value as AudienceCodename);
-
-export interface HeroSectionElements extends IContentItemElements {
-  readonly headline: Elements.TextElement;
-  readonly subheadline: Elements.TextElement;
-  readonly cta_text: Elements.TextElement;
-  readonly cta_url: Elements.TextElement;
-  readonly personalization__variant_type: Elements.TaxonomyElement;
-  readonly personalization__personalization_audience: Elements.TaxonomyElement;
-  readonly personalization__content_variants: Elements.LinkedItemsElement<HeroSection>;
-}
-
-export type HeroSection = IContentItem<HeroSectionElements>;
-
-export interface LandingPageElements extends IContentItemElements {
-  readonly title: Elements.TextElement;
-  readonly hero: Elements.LinkedItemsElement<HeroSection>;
-}
-
-export type LandingPage = IContentItem<LandingPageElements>;
+  value === null || isPersonalizationAudiencesTaxonomyTermCodename(value);

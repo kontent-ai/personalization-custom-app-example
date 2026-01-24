@@ -1,4 +1,5 @@
-import type { AudienceCodename, HeroSection } from "../types/content.ts";
+import type { AudienceCodename } from "../types/content.ts";
+import type { HeroSectionType } from "../types/generated/types/hero-section-type.generated.ts";
 
 /**
  * Resolves the appropriate content variant based on the current audience.
@@ -8,14 +9,15 @@ import type { AudienceCodename, HeroSection } from "../types/content.ts";
  * @returns The matching variant or base content as fallback
  */
 export const resolveVariant = (
-  baseItem: HeroSection,
+  baseItem: HeroSectionType,
   currentAudience: AudienceCodename,
-): HeroSection => {
+): HeroSectionType => {
   if (currentAudience === null) {
     return baseItem;
   }
 
-  const variants = baseItem.elements.personalization__content_variants.linkedItems;
+  const variants = baseItem.elements.personalization__content_variants
+    .linkedItems as ReadonlyArray<HeroSectionType>;
 
   const matchingVariant = variants.find((variant) =>
     variant.elements.personalization__personalization_audience.value.some(
@@ -30,7 +32,7 @@ export const resolveVariant = (
  * Gets the audience name from a hero section item.
  * Returns "Base Content" for base items, or the audience name for variants.
  */
-export const getVariantAudienceName = (item: HeroSection): string => {
+export const getVariantAudienceName = (item: HeroSectionType): string => {
   const variantType = item.elements.personalization__variant_type.value[0];
 
   if (variantType?.codename === "base_content") {

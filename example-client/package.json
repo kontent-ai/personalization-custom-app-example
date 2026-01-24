@@ -10,7 +10,7 @@
     "sync:model": "tsx scripts/sync-model.ts",
     "sync:content": "tsx scripts/sync-content.ts",
     "sync:all": "pnpm sync:model && pnpm sync:content",
-    "generate:types": "kontent-generate --environmentId=$VITE_KONTENT_ENVIRONMENT_ID --previewApiKey=$VITE_KONTENT_PREVIEW_API_KEY --outputDir=./src/types/generated"
+    "generate:types": "tsx scripts/generate-types.ts"
   },
   "dependencies": {
     "@kontent-ai/delivery-sdk": "^16.4.0",
@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@kontent-ai/data-ops": "2.4.1",
-    "@kontent-ai/model-generator": "^8.0.0",
+    "@kontent-ai/model-generator": "^9.1.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "5.1.2",
