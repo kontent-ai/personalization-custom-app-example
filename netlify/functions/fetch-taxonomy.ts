@@ -19,7 +19,6 @@ export default async (request: Request, _context: Context) => {
   const { environmentId } = parseResult.data;
   const codename = parseResult.data.codename;
 
-
   try {
     const client = createManagementClient(environmentId);
     const response = await client.getTaxonomy().byTaxonomyCodename(codename).toPromise();
