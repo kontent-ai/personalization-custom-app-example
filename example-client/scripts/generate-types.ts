@@ -38,7 +38,7 @@ const main = async (): Promise<void> => {
   console.log("\nTypeScript models generated successfully!");
 };
 
-main().catch((error) => {
+await main().catch((error) => {
   console.error("Error:", error instanceof Error ? error.message : error);
   process.exit(1);
 });

@@ -65,7 +65,7 @@ const main = async (): Promise<void> => {
   console.log("\nNext step: Run 'pnpm sync:content' to import sample content items.");
 };
 
-main().catch((error) => {
+await main().catch((error) => {
   console.error("Error:", error instanceof Error ? error.message : error);
   process.exit(1);
 });
