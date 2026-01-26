@@ -1,18 +1,10 @@
-import type {
-  ContentTypeElements,
-  ElementModels,
-  LanguageVariantModels,
-} from "@kontent-ai/management-sdk";
+import type { ContentTypeElements, LanguageVariantModels } from "@kontent-ai/management-sdk";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { z } from "zod";
-import {
-  ELEMENT_SUFFIXES,
-  findElementIdByCodenameSuffix,
-  TAXONOMY_CODENAMES,
-} from "../constants/codenames.ts";
+import { ELEMENT_SUFFIXES, TAXONOMY_CODENAMES } from "../constants/codenames.ts";
 import { queryKeys } from "../constants/queryKeys.ts";
 import { fetchContentType, fetchItem, fetchTaxonomy, fetchVariant } from "../services/api.ts";
 import type { CurrentItemData } from "../types/variant.types.ts";
+import { checkIsVariant, findElementIdByCodenameSuffix } from "../utils/elementUtils.ts";
 import { findVariantTermId } from "../utils/taxonomy-utils.ts";
 
 const buildElementCodenamesMap = (
@@ -29,40 +21,6 @@ const buildElementCodenamesMap = (
     .map((el) => [el.id, el.codename] as [string, string]);
 
   return new Map([...typeEntries, ...snippetEntries]);
-};
-
-const referenceArraySchema = z.array(z.object({ id: z.string() }));
-
-const checkIsVariant = (
-  variantElements: ReadonlyArray<ElementModels.ContentItemElement>,
-  elementCodenames: ReadonlyMap<string, string>,
-  variantTermId: string | undefined,
-): boolean => {
-  if (!variantTermId) {
-    return false;
-  }
-
-  const variantTypeElementId = findElementIdByCodenameSuffix(
-    elementCodenames,
-    ELEMENT_SUFFIXES.VARIANT_TYPE,
-  );
-
-  if (!variantTypeElementId) {
-    return false;
-  }
-
-  const variantTypeElement = variantElements.find((el) => el.element.id === variantTypeElementId);
-
-  if (!variantTypeElement) {
-    return false;
-  }
-
-  const taxonomyValue = referenceArraySchema.safeParse(variantTypeElement.value);
-  if (!taxonomyValue.success) {
-    return false;
-  }
-
-  return taxonomyValue.data.some((term) => term.id === variantTermId);
 };
 
 const checkHasSnippet = (elementCodenames: ReadonlyMap<string, string>): boolean => {

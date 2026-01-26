@@ -1,103 +1,37 @@
 import type { ElementModels } from "@kontent-ai/management-sdk";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { z } from "zod";
-import {
-  ELEMENT_SUFFIXES,
-  findElementIdByCodenameSuffix,
-  TAXONOMY_CODENAMES,
-} from "../constants/codenames.ts";
+import { ELEMENT_SUFFIXES, TAXONOMY_CODENAMES } from "../constants/codenames.ts";
 import { queryKeys } from "../constants/queryKeys.ts";
 import { fetchItem, fetchTaxonomy, fetchVariant } from "../services/api.ts";
 import type { CurrentItemData, VariantInfo, VariantsData } from "../types/variant.types.ts";
+import { checkIsVariant, getReferencesByCodenameSuffix } from "../utils/elementUtils.ts";
 import { notNull } from "../utils/function.ts";
 import { findVariantTermId } from "../utils/taxonomy-utils.ts";
-
-const referenceArraySchema = z.array(z.object({ id: z.string() }));
-
-const checkIsVariant = (
-  variantElements: ReadonlyArray<ElementModels.ContentItemElement>,
-  elementCodenames: ReadonlyMap<string, string>,
-  variantTermId: string,
-): boolean => {
-  const variantTypeElementId = findElementIdByCodenameSuffix(
-    elementCodenames,
-    ELEMENT_SUFFIXES.VARIANT_TYPE,
-  );
-
-  if (!variantTypeElementId) {
-    return false;
-  }
-
-  const variantTypeElement = variantElements.find((el) => el.element.id === variantTypeElementId);
-
-  if (!variantTypeElement) {
-    return false;
-  }
-
-  const parsed = referenceArraySchema.safeParse(variantTypeElement.value);
-  if (!parsed.success) {
-    return false;
-  }
-
-  return parsed.data.some((term) => term.id === variantTermId);
-};
 
 const extractLinkedItemIds = (
   variantElements: ReadonlyArray<ElementModels.ContentItemElement>,
   elementCodenames: ReadonlyMap<string, string>,
 ): ReadonlyArray<string> => {
-  const contentVariantsElementId = findElementIdByCodenameSuffix(
+  const references = getReferencesByCodenameSuffix(
+    variantElements,
     elementCodenames,
     ELEMENT_SUFFIXES.CONTENT_VARIANTS,
   );
 
-  if (!contentVariantsElementId) {
-    return [];
-  }
-
-  const contentVariantsElement = variantElements.find(
-    (el) => el.element.id === contentVariantsElementId,
-  );
-
-  if (!contentVariantsElement) {
-    return [];
-  }
-
-  const parsed = referenceArraySchema.safeParse(contentVariantsElement.value);
-
-  if (!parsed.success) {
-    return [];
-  }
-
-  return parsed.data.map((item) => item.id);
+  return references?.map((item) => item.id) ?? [];
 };
 
 export const extractAudienceTermId = (
   variantElements: ReadonlyArray<ElementModels.ContentItemElement>,
   elementCodenames: ReadonlyMap<string, string>,
 ): string | null => {
-  const audienceElementId = findElementIdByCodenameSuffix(
+  const references = getReferencesByCodenameSuffix(
+    variantElements,
     elementCodenames,
     ELEMENT_SUFFIXES.PERSONALIZATION_AUDIENCE,
   );
 
-  if (!audienceElementId) {
-    return null;
-  }
-
-  const audienceElement = variantElements.find((el) => el.element.id === audienceElementId);
-
-  if (!audienceElement) {
-    return null;
-  }
-
-  const parsed = referenceArraySchema.safeParse(audienceElement.value);
-
-  if (!parsed.success || parsed.data.length === 0) {
-    return null;
-  }
-
-  return parsed.data[0]?.id ?? null;
+  return references?.[0]?.id ?? null;
 };
 
 const fetchLinkedVariantsData = async (

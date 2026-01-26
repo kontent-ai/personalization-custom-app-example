@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ELEMENT_SUFFIXES, findElementIdByCodenameSuffix } from "../constants/codenames.ts";
+import { ELEMENT_SUFFIXES } from "../constants/codenames.ts";
 import { queryKeys } from "../constants/queryKeys.ts";
 import { deleteItem, updateContentVariants } from "../services/api.ts";
 import type { CurrentItemData, VariantInfo, VariantsData } from "../types/variant.types.ts";
+import { findElementIdByCodenameSuffix } from "../utils/elementUtils.ts";
 import { allVariants } from "../utils/variants.ts";
 
 interface UseDeleteVariantParams {
